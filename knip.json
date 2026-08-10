@@ -1,0 +1,20 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": ["scripts/*.ts"]
+    },
+    "apps/server": {},
+    "apps/admin": {
+      "entry": ["index.html"]
+    },
+    "apps/chat": {
+      "entry": ["index.html"]
+    },
+    "packages/*": {},
+    "evals": {
+      "entry": ["deterministic/**/*.test.ts", "fixtures/schema.ts"]
+    }
+  },
+  "ignoreDependencies": ["@harness/.*"]
+}

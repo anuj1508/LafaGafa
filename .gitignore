@@ -1,0 +1,41 @@
+# Environment Configuration
+.env
+.env.local
+
+# Dependency directories
+node_modules
+
+# Build output
+dist
+*.tsbuildinfo
+
+# Turbo
+.turbo
+
+# Test coverage
+coverage
+
+# Traces written by the JSONL sink
+traces/
+
+# macOS
+.DS_Store
+
+# Logs
+logs
+*.log
+
+# Operator config: environment-specific ids, not a template. settings.example.yaml is the template.
+settings.yaml
+
+# Working notes: status against the brief, and the decision log. Useful, but not the deliverable.
+ASSIGNMENT-STATUS.md
+DECISIONS.md
+
+# Open questions and blockers. A working note, not a deliverable.
+PENDING.md
+evals/.results/
+
+# Scratch tooling: useful locally, not part of the build.
+internal/
+.gstack/

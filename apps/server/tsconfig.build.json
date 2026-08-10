@@ -1,0 +1,7 @@
+{
+  // Emit config. Tests live beside the code they cover so they are read together, but they are
+  // not part of the package's output — `tsconfig.json` still includes them so the type-aware
+  // lint rules and `tsc --noEmit` cover them.
+  "extends": "./tsconfig.json",
+  "exclude": ["src/**/*.test.ts"]
+}

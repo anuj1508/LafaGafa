@@ -1,0 +1,164 @@
+# Operator settings. Copy to settings.yaml and edit; the harness validates this at boot and
+# refuses to start on a bad value rather than failing on the first customer message.
+
+businessName: Northwind Dental
+locationId: REPLACE_WITH_SANDBOX_LOCATION_ID
+# The business's own clock. Every time the agent says or reads is in this zone.
+timezone: Europe/London
+# The agent's character, in markdown.
+soulPath: SOUL.md
+
+ghl:
+  # The channel the built-in chat surface speaks on, in both directions. Live_Chat needs neither a
+  # phone number on the contact nor a conversation provider, so both sides of an anonymous
+  # visitor's thread read consistently.
+  chatChannel: Live_Chat
+  # Only for real messages from real phones, which arrive through the provider as "Custom".
+  # The chat surface does not use it.
+  conversationProviderId: REPLACE_WITH_CONVERSATION_PROVIDER_ID
+  # Where a reply goes when a message arrived as "Custom". That type is receive-only.
+  replyChannel: SMS
+
+model:
+  # Tried in order. The first entry is primary; the rest are the failover chain, used when a
+  # provider is down, rate-limited, or over its timeout. Conversation history carries across.
+  chain:
+    - provider: anthropic
+      model: claude-haiku-4-5-20251001
+      temperature: 0.3
+      maxOutputTokens: 1200
+      timeoutMs: 15000
+    - provider: openai
+      model: gpt-4o-mini
+      temperature: 0.3
+      maxOutputTokens: 1200
+      timeoutMs: 15000
+    - provider: google
+      model: gemini-3.5-flash-lite
+      temperature: 0.3
+      maxOutputTokens: 1200
+      timeoutMs: 15000
+  # Decides whether a turn needs the knowledge base at all. Small and fast by design.
+  #
+  # maxOutputTokens is 512 rather than the ~30 the JSON reply needs. Reasoning models spend the
+  # budget thinking before they emit a character, and Gemini 3.x truncated mid-object at 60 —
+  # every gate call failed open, which looked like a model that retrieves on everything rather
+  # than one that never answered. An unused ceiling is free; a too-tight one is invisible.
+  gate:
+    provider: anthropic
+    model: claude-haiku-4-5-20251001
+    temperature: 0
+    maxOutputTokens: 512
+    timeoutMs: 2500
+  # Scores eval rubrics. Kept off the chat provider so the agent never grades itself.
+  judge:
+    provider: openai
+    model: gpt-4o
+    temperature: 0
+    maxOutputTokens: 600
+    timeoutMs: 30000
+
+knowledge:
+  docsGlob: kb/**/*.md
+  topK: 4
+  relevanceFloor: 0.35
+  retrievalAggressiveness: balanced
+  gateFailOpen: true
+  gateTimeoutMs: 2500
+  logKnowledgeGaps: true
+
+handover:
+  triggers:
+    explicitRequest: true
+    frustration: true
+    outOfScope: true
+    repeatedFailure: true
+  frustrationSensitivity: medium
+  maxFailedTurns: 3
+  outOfScopeBehavior: offer
+  tags:
+    - ai-handover
+    - needs-human
+  assignTo: null
+  sendFinalMessage: true
+  finalMessage: I'm connecting you with a member of our team — they'll reply here shortly.
+  resume:
+    mode: stop
+
+booking:
+  # Leave null to use the location's first active calendar.
+  calendarId: null
+  appointmentTitle: Consultation
+  appointmentMinutes: 30
+  slotsOffered: 3
+  minNoticeMinutes: 60
+  horizonDays: 30
+  timezoneSource: contact
+  failureTag: booking-failed
+  # How long offered slots stay quotable before the agent must look again.
+  slotsFreshMinutes: 10
+
+contactCapture:
+  writableFields:
+    - firstName
+    - lastName
+    - email
+    - phone
+    # Somebody else's address, given so the practice can write to them. Deliberately not `email`:
+    # GHL deduplicates contacts on that field, so putting a third party's address there can merge
+    # two people into one record and redirects every future reminder to the wrong inbox.
+    #
+    # It is the only non-standard field here, and it earns that because nothing else can use the
+    # information. A stated preference like "mornings work best" does not belong on this list:
+    # there is an action that uses it — search the mornings — and filing a note instead is a tool
+    # call that helps nobody.
+    - correspondenceEmail
+  confirmBeforeWrite:
+    - email
+    - phone
+  maxAsksPerField: 2
+  overwriteExisting: false
+
+behavior:
+  replyCap: 20
+  debounceMs: 4000
+  quietHours:
+    enabled: false
+    timezone: America/New_York
+    start: "09:00"
+    end: "21:00"
+  channels:
+    - SMS
+    - Live_Chat
+    # Messages arriving through a custom conversation provider carry messageType "Custom", not
+    # the underlying channel. Omitting this silently drops every message from that provider.
+    - Custom
+  # Any contact carrying one of these tags is out of automation entirely — the kill switch that
+  # does not need a developer. Removing the tag puts them back.
+  excludedContactTags:
+    - no-ai
+  standDownOnHumanReply: true
+  # How long a turn may run before the customer is told something is happening. A tool-using turn
+  # takes several seconds; null switches this off for operators who want one message per turn.
+  acknowledgeAfterMs: 2000
+  # Only skills that visibly take time. An introduction does not need interrupting.
+  acknowledgeSkills:
+    - book_appointment
+  # How long a note about this conversation is worth carrying at all. Older notes are dropped.
+  memoryMaxAgeHours: 24
+  maxIterations: 6
+  turnBudgetMs: 20000
+
+safety:
+  declineMessage: >-
+    I don't have that in what I've been given — I can pass this to the team if you'd like.
+  logDeclinedQuestions: true
+  # Said only when the harness could not produce a reply. Not the handover message: running out
+  # of steps is not the same as deciding a person is needed.
+  fallbackMessage: >-
+    Sorry — something went wrong on my side just now. Could you say that again?
+
+skills:
+  update_contact: true
+  book_appointment: true
+  human_handover: true

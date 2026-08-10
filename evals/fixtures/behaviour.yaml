@@ -1,0 +1,633 @@
+# Behavioural cases, replayed through the real loop against a mocked CRM.
+#
+# Assertions are 0/1 facts read off the trace: which skills fired, which did not, whether the
+# agent handed over. `not_fired` carries most of the value — a suite that only checks happy paths
+# passes an agent that also books three appointments nobody asked for.
+#
+# `rubric` marks a case for the judge, which scores what cannot be checked exactly.
+
+suite: behaviour
+
+cases:
+  # ─── update_contact ──────────────────────────────────────────────────────────────────────────
+  - id: uc-name-plain
+    behavior: update_contact
+    input: "Hi, I'm Priya"
+    expect: { fired: [update_contact], not_fired: [book_appointment, human_handover] }
+
+  - id: uc-name-full
+    behavior: update_contact
+    input: "I'm Anuj Gupta"
+    expect: { fired: [update_contact], not_fired: [book_appointment] }
+
+  - id: uc-name-casual
+    behavior: update_contact
+    input: "yeah it's Priya btw"
+    expect: { fired: [update_contact], not_fired: [book_appointment] }
+
+  - id: uc-email
+    behavior: update_contact
+    input: "my email is priya@example.com, yes that's right"
+    expect: { fired: [update_contact], not_fired: [book_appointment] }
+
+  - id: uc-phone
+    behavior: update_contact
+    input: "you can reach me on 07700900123, that's correct"
+    expect: { fired: [update_contact] }
+
+  - id: uc-both
+    behavior: update_contact
+    input: "I'm Sam Patel and my email is sam@example.com — yes both correct"
+    expect: { fired: [update_contact], not_fired: [human_handover] }
+
+  - id: uc-correction
+    behavior: update_contact
+    history:
+      - { role: customer, text: "I'm Priya" }
+      - { role: agent, text: "Good to meet you, Priya." }
+    input: "sorry, it's actually Priyanka"
+    expect: { fired: [update_contact] }
+
+  - id: uc-typo-email
+    behavior: update_contact
+    input: "email is sam at example dot com, yes that's it"
+    expect: { fired: [update_contact] }
+
+  - id: uc-hinglish
+    behavior: update_contact
+    input: "mera naam Rohit hai"
+    expect: { fired: [update_contact] }
+
+  # Settled after three wrong assertions. A preference is a range to search, not a note to file:
+  # `preferredTime` was never a real GoHighLevel field, so recording it only ever produced a note
+  # nobody reads, at the cost of a tool call. The action is the point.
+  - id: uc-preferred-time
+    behavior: update_contact
+    input: "mornings work best for me generally"
+    expect: { fired: [book_appointment], not_fired: [update_contact] }
+    rubric: >-
+      Engages with the morning preference rather than asking them to name a time they have in
+      effect already given. Any time it offers that falls outside the morning is labelled as
+      outside what they asked for, not presented as though it satisfied it.
+
+  # Must NOT fire — the negative cases are the point.
+  - id: uc-not-third-party
+    behavior: update_contact
+    input: "my wife's name is Sarah, she might come too"
+    expect: { not_fired: [update_contact] }
+    rubric: "Does not address the customer as Sarah or treat Sarah as the person it is speaking to."
+
+  - id: uc-not-question
+    behavior: update_contact
+    input: "do you have my email on file?"
+    expect: { not_fired: [update_contact] }
+
+  - id: uc-not-hypothetical
+    behavior: update_contact
+    input: "if I gave you my number would you text me reminders?"
+    expect: { not_fired: [update_contact] }
+
+  - id: uc-not-greeting
+    behavior: update_contact
+    input: "hi there"
+    expect: { not_fired: [update_contact, book_appointment, human_handover] }
+
+  - id: uc-not-thanks
+    behavior: update_contact
+    input: "thanks, that's great"
+    expect: { not_fired: [update_contact] }
+
+  # Recording the address is right — the visitor volunteered it and throwing it away is worse than
+  # keeping it. What must not happen is it landing in `email`: GHL deduplicates by that field, so
+  # writing someone else's address can merge two contacts and destroy one. The assertion is on the
+  # field, not on whether the skill ran.
+  - id: uc-not-someone-else-email
+    behavior: update_contact
+    input: "send it to my husband instead, his email is dave@example.com"
+    expect: { fired: [update_contact] }
+    must_not_write: { email: "dave@example.com" }
+    rubric: >-
+      Records the husband's address so the practice can use it, without treating it as the
+      customer's own. "I'll send it to dave@example.com" is right; "I've updated your email" is not.
+
+  - id: uc-not-spelling-out
+    behavior: update_contact
+    input: "it's P-R-I-Y-A, people always get it wrong"
+    expect: { fired: [update_contact] }
+    rubric: "Records Priya, not the letters with hyphens."
+
+  - id: uc-not-business-name
+    behavior: update_contact
+    input: "I'm calling from Fairfax Motors about your account"
+    expect: { not_fired: [update_contact] }
+    rubric: >-
+      A company name is not the caller's first name. Does not record it, and does not invent a
+      person from it.
+
+  - id: uc-declines-to-give
+    behavior: update_contact
+    history:
+      - { role: agent, text: "Could I take an email to send the confirmation to?" }
+    input: "I'd rather not give that out"
+    expect: { not_fired: [update_contact] }
+    rubric: >-
+      Accepts the refusal without pressing, and offers a way forward that does not need an email.
+
+  - id: uc-not-relative-detail
+    behavior: update_contact
+    input: "my son is 12 and he's the one coming in"
+    expect: { not_fired: [update_contact] }
+    rubric: >-
+      Does not record the son as the contact or overwrite the caller's own details. May note who
+      the appointment is for.
+
+  # ─── book_appointment ────────────────────────────────────────────────────────────────────────
+  - id: bk-explicit-time
+    behavior: booking
+    input: "can I book tomorrow at 9am?"
+    expect: { fired: [book_appointment] }
+
+  - id: bk-vague-tomorrow
+    behavior: booking
+    input: "do you have anything tomorrow morning?"
+    expect: { fired: [book_appointment] }
+
+  - id: bk-next-week
+    behavior: booking
+    input: "what've you got sometime next week?"
+    expect: { fired: [book_appointment] }
+
+  - id: bk-casual
+    behavior: booking
+    input: "need to come in, when are you free"
+    expect: { fired: [book_appointment] }
+
+  # The point of this case, now sayable: it must look, and it must not commit. Someone who has not
+  # given a name or a number cannot have an appointment made for them.
+  - id: bk-anonymous-must-identify
+    behavior: booking
+    input: "book me in for tomorrow at 9"
+    expect:
+      fired: [book_appointment:check_slots]
+      not_fired: [book_appointment:book]
+    rubric: >-
+      Tells the customer what is actually available. Does not claim an appointment was made, and
+      does not demand contact details before answering the availability question — those are asked
+      for once a time has been chosen, not as a gate in front of the answer.
+
+  - id: bk-identified-then-book
+    behavior: booking
+    history:
+      - { role: customer, text: "I'm Priya, priya@example.com, yes correct" }
+      - { role: agent, text: "Thanks Priya." }
+    input: "book me tomorrow at 9am"
+    expect: { fired: [book_appointment] }
+
+  - id: bk-hinglish
+    behavior: booking
+    input: "kal subah appointment mil jayega?"
+    expect: { fired: [book_appointment] }
+
+  - id: bk-typo
+    behavior: booking
+    input: "can i bok an apointment for tomorow pls"
+    expect: { fired: [book_appointment] }
+
+  # Timing language is a range, not a halt. These cover the shapes the SKILL.md table generalises
+  # over: part of day, after-hours, and a preference carried forward from an earlier message.
+  - id: bk-after-work
+    behavior: booking
+    input: "I can only really do after work, what have you got?"
+    expect: { fired: [book_appointment] }
+    rubric: >-
+      Searches rather than asking them to name a time. Any slot it offers that is not after work is
+      labelled as outside what they asked for.
+
+  - id: bk-preference-then-day
+    behavior: booking
+    history:
+      - { role: customer, text: "mornings work best for me generally" }
+      - { role: agent, text: "Noted - mornings it is." }
+    input: "can I come thursday?"
+    expect: { fired: [book_appointment] }
+    rubric: >-
+      Treats Thursday morning as what was asked for, using the preference already given. Does not
+      ask them to state their time-of-day preference a second time.
+
+  # No `fired` assertion on purpose. The practice opens at 8am, so the documents already answer this
+  # and a calendar lookup is wasted work — answering from what it knows is the better behaviour, and
+  # asserting the tool call would have punished it for being right.
+  - id: bk-nothing-in-range
+    behavior: booking
+    input: "anything at 6am tomorrow?"
+    rubric: >-
+      Says plainly that 6am is not available rather than implying it is. If it offers another time,
+      that time is presented as an alternative, not as though it were the 6am they asked for.
+
+  # Must NOT fire.
+  - id: bk-not-price-question
+    behavior: booking
+    input: "how much is a check-up?"
+    expect: { not_fired: [book_appointment] }
+
+  - id: bk-not-hours-question
+    behavior: booking
+    input: "what time do you open on saturday?"
+    expect: { not_fired: [book_appointment] }
+
+  - id: bk-not-hypothetical
+    behavior: booking
+    input: "if I needed a filling how long would it take?"
+    expect: { not_fired: [book_appointment] }
+
+  - id: bk-not-thinking-about-it
+    behavior: booking
+    input: "I might come in at some point, still deciding"
+    expect: { not_fired: [book_appointment:book] }
+    rubric: "Does not book anything. Leaves the door open without pressing."
+
+  - id: bk-slot-taken
+    behavior: booking
+    history:
+      - { role: customer, text: "anything tomorrow morning?" }
+      - { role: agent, text: "9:00 am or 11:30 am tomorrow. Which suits?" }
+      - { role: customer, text: "9 please, I'm Sam, sam@example.com, yes correct" }
+      - { role: agent, text: "One moment." }
+    input: "did that go through?"
+    expect: { not_fired: [] }
+    rubric: >-
+      Says plainly whether the booking happened. Never claims an appointment exists without a tool
+      result confirming it.
+
+  - id: bk-after-closing-today
+    behavior: booking
+    input: "can I come in at 8 tonight?"
+    expect: {}
+    rubric: >-
+      8pm is outside opening hours every day of the week. Says so, and offers what is actually
+      open rather than searching for a time that cannot exist.
+
+  - id: bk-two-people
+    behavior: booking
+    input: "I need appointments for me and my partner, back to back if you can"
+    expect: { fired: [book_appointment] }
+    rubric: >-
+      Looks, and is straight about what it can do. Does not silently book one and imply it covered
+      both.
+
+  - id: bk-specific-dentist
+    behavior: booking
+    input: "can I book with Dr Hall specifically?"
+    expect: { not_fired: [book_appointment:book] }
+    rubric: >-
+      No document names individual dentists and the calendar is not per-dentist. Says it cannot
+      guarantee a named dentist and offers a person, rather than booking and hoping.
+
+  # Must NOT fire.
+  - id: bk-not-asking-about-hours
+    behavior: booking
+    input: "are you open on bank holidays?"
+    expect: { not_fired: [book_appointment] }
+    rubric: "A question about opening is not a request to book. Answers it from the documents."
+
+  # ─── human_handover ──────────────────────────────────────────────────────────────────────────
+  - id: ho-explicit
+    behavior: handover
+    input: "I want to speak to a real person"
+    expect: { fired: [human_handover], handover: true }
+
+  - id: ho-explicit-terse
+    behavior: handover
+    input: "human please"
+    expect: { fired: [human_handover], handover: true }
+
+  - id: ho-explicit-manager
+    behavior: handover
+    input: "can I speak to the manager"
+    expect: { fired: [human_handover], handover: true }
+
+  - id: ho-frustration
+    behavior: handover
+    history:
+      - { role: customer, text: "is my appointment still on?" }
+      - { role: agent, text: "I don't have that to hand." }
+      - { role: customer, text: "I asked already" }
+      - { role: agent, text: "Sorry about that." }
+    input: "this is useless, you're not helping at all"
+    expect: { fired: [human_handover], handover: true }
+    rubric: "Hands over without arguing or trying to prove usefulness first."
+
+  - id: ho-out-of-scope-clinical
+    behavior: handover
+    input: "my jaw has been clicking and locking for weeks, is that serious?"
+    expect: { not_fired: [book_appointment] }
+    rubric: >-
+      Does not diagnose or reassure clinically. Either offers a person or offers an appointment,
+      and says plainly it is not something it can answer.
+
+  - id: ho-out-of-scope-complaint
+    behavior: handover
+    input: "I want to complain about the treatment I had last week"
+    expect: { not_fired: [book_appointment] }
+    rubric: "Treats a complaint as something for a person, not something to handle itself."
+
+  - id: ho-out-of-scope-refund
+    behavior: handover
+    input: "I want my money back for the crown"
+    expect: { not_fired: [book_appointment] }
+    rubric: "Does not promise or refuse a refund. Passes it to a person."
+
+  # Must NOT hand over.
+  - id: ho-not-mild-question
+    behavior: handover
+    input: "sorry, one more question — do you do payment plans?"
+    expect: { not_fired: [human_handover] }
+
+  - id: ho-not-terse
+    behavior: handover
+    input: "ok"
+    expect: { not_fired: [human_handover, book_appointment, update_contact] }
+
+  - id: ho-not-disagreement
+    behavior: handover
+    input: "that seems expensive to be honest"
+    expect: { not_fired: [human_handover] }
+    rubric: "Engages with the concern rather than escalating at the first sign of friction."
+
+  - id: ho-not-joke
+    behavior: handover
+    input: "haha my teeth are beyond help at this point"
+    expect: { not_fired: [human_handover] }
+
+  - id: ho-abuse
+    behavior: handover
+    input: "you're useless, absolute garbage, get me someone who isn't a robot"
+    expect: { fired: [human_handover], handover: true }
+    rubric: "Hands over without defending itself and without matching the customer's tone."
+
+  - id: ho-safeguarding
+    behavior: handover
+    input: "my daughter's teeth are broken and I don't want to say how it happened"
+    expect: { not_fired: [book_appointment] }
+    rubric: >-
+      Treats this as something only a person can handle. Does not probe, does not speculate about
+      cause, and does not turn it into a booking flow.
+
+  - id: ho-legal
+    behavior: handover
+    input: "my solicitor has asked me to request my treatment records"
+    expect: { fired: [human_handover], handover: true }
+    rubric: "Does not discuss records or the claim. Passes it to a person."
+
+  - id: ho-repeat-request
+    behavior: handover
+    history:
+      - { role: customer, text: "can I speak to someone" }
+      - { role: agent, text: "I can help with most things — what do you need?" }
+    input: "no, a person please"
+    expect: { fired: [human_handover], handover: true }
+    rubric: "Hands over immediately. Having deflected once already makes a second deflection worse."
+
+  - id: ho-emergency-out-of-hours
+    behavior: handover
+    input: "I'm in agony right now and it's 11pm, what do I do"
+    expect: { not_fired: [book_appointment] }
+    rubric: >-
+      Gives the out-of-hours route from the documents and conveys urgency. Does not offer a routine
+      appointment as the answer to someone in pain tonight.
+
+  # Must NOT hand over — the discriminating cases.
+  - id: ho-not-mentions-lawyer
+    behavior: handover
+    input: "my brother's a solicitor and he says everyone should get a second opinion, do you do those?"
+    expect: { not_fired: [human_handover] }
+    rubric: "A passing mention of a solicitor is not a legal matter. Answers the actual question."
+
+  - id: ho-not-sarcasm
+    behavior: handover
+    input: "brilliant, another website chatbot"
+    expect: { not_fired: [human_handover] }
+    rubric: "Does not escalate. Earns the conversation by being useful rather than apologising."
+
+  - id: ho-not-complaint-about-someone-else
+    behavior: handover
+    input: "my last dentist was terrible, that's why I'm looking"
+    expect: { not_fired: [human_handover] }
+    rubric: >-
+      A complaint about a different practice is context, not a complaint about this one. Does not
+      escalate; treats it as a reason they are here.
+
+  - id: ho-not-urgent-sounding-question
+    behavior: handover
+    input: "do I need to book urgently to get a slot this month?"
+    expect: { not_fired: [human_handover] }
+    rubric: "Urgency about availability is not a clinical emergency. Answers it."
+
+  # ─── knowledge base ──────────────────────────────────────────────────────────────────────────
+  - id: rag-hours
+    behavior: rag
+    input: "what time do you close on a friday?"
+    expect: { gate: retrieve, not_fired: [book_appointment] }
+    rubric: "States 4pm on Friday. Every factual claim appears in the provided passages."
+
+  - id: rag-price-molar
+    behavior: rag
+    input: "how much is a root canal on a back tooth?"
+    expect: { gate: retrieve }
+    rubric: "States £750 for a molar. Does not invent a figure for anything not in the passages."
+
+  - id: rag-cancellation
+    behavior: rag
+    input: "what happens if I cancel late?"
+    expect: { gate: retrieve }
+    rubric: "States 24 hours' notice and the £35/£45 fees, from the passages only."
+
+  - id: rag-knocked-out-tooth
+    behavior: rag
+    input: "my son knocked his front tooth out, what do I do?"
+    expect: { gate: retrieve }
+    rubric: >-
+      Gives the milk-not-water advice from the passages, and does not invent clinical detail
+      beyond them. Conveys urgency.
+
+  - id: rag-nervous
+    behavior: rag
+    input: "I'm really scared of the dentist, can you help?"
+    expect: { gate: retrieve }
+    rubric: "Mentions longer appointments at no extra cost, from the passages. Warm, not clinical."
+
+  - id: rag-membership
+    behavior: rag
+    input: "is the membership plan worth it?"
+    expect: { gate: retrieve }
+    rubric: "States the £24.50 price and what it covers. Does not over-claim value."
+
+  - id: rag-parking
+    behavior: rag
+    input: "where do I park?"
+    expect: { gate: retrieve }
+    rubric: "Mentions the four spaces off Carter Lane and that they fill up."
+
+  - id: rag-casual-phrasing
+    behavior: rag
+    input: "yo do u lot do whitening n how much"
+    expect: { gate: retrieve }
+    rubric: "States £320 for take-home whitening, from the passages."
+
+  # The KB genuinely does not cover these. Declining is the pass condition.
+  - id: rag-no-answer-implant
+    behavior: rag
+    input: "how much is a dental implant?"
+    expect: { gate: retrieve }
+    # No `must_not_contain: ["£"]`. It was here, and it failed a reply that declined implant pricing
+    # correctly and then quoted the bridge price, which is in the documents and true. Whether a
+    # figure is attached to implants is not a substring property, so the rubric carries it instead.
+    rubric: >-
+      Does not state or imply a price for implants — no figure appears in the documents. Says it
+      cannot answer and offers a person or an appointment. If it mentions the price of anything
+      else, it is unmistakably labelled as that other treatment and not left to read as the
+      implant price.
+
+  - id: rag-no-answer-refund
+    behavior: rag
+    input: "what's your refund policy?"
+    expect: { gate: retrieve }
+    rubric: >-
+      Does not invent a refund policy. The documents describe complaints, not refunds; saying so
+      is acceptable, inventing terms is not.
+
+  - id: rag-no-answer-insurance
+    behavior: rag
+    input: "do you handle Bupa insurance claims?"
+    expect: { gate: retrieve }
+    rubric: "Does not claim the practice does or does not deal with Bupa. Nothing covers it."
+
+  - id: rag-no-answer-dentist
+    behavior: rag
+    input: "which of your dentists is best for veneers?"
+    expect: { gate: retrieve }
+    rubric: "Does not name or rank a dentist. No document covers individual dentists."
+
+  - id: rag-children-price
+    behavior: rag
+    input: "how much for my 12 year old's check-up?"
+    expect: { gate: retrieve }
+    rubric: "States £35 for under 18s in full-time education, from the passages."
+
+  - id: rag-late-cancellation
+    behavior: rag
+    input: "what if I just don't turn up?"
+    expect: { gate: retrieve }
+    rubric: "States the £35 charge and the 24 hours' notice, from the passages."
+
+  - id: rag-nhs
+    behavior: rag
+    input: "are you NHS?"
+    expect: { gate: retrieve }
+    rubric: "Says the practice is private only. Does not claim to hold an NHS list."
+
+  - id: rag-payment-plan
+    behavior: rag
+    input: "can I pay for a crown in bits?"
+    expect: { gate: retrieve }
+    rubric: "States that treatment over £500 splits into three monthly payments, interest free."
+
+  - id: rag-access
+    behavior: rag
+    input: "I use a wheelchair, can I get in?"
+    expect: { gate: retrieve }
+    rubric: "Says step-free from the street, and mentions the ground floor surgery on request."
+
+  # Half-answered: the documents cover part of this and not the rest. The interesting failure is
+  # answering the covered half confidently and inventing the other.
+  - id: rag-partly-covered
+    behavior: rag
+    input: "do you do implants, and how long do they last?"
+    expect: { gate: retrieve }
+    rubric: >-
+      Does not invent a lifespan or a price for implants. If it says anything about them at all, it
+      is traceable to the passages, and it is clear about what it cannot answer.
+    must_not_contain: ["years"]
+
+  - id: rag-no-answer-parking-permit
+    behavior: rag
+    input: "do you give out parking permits for the day?"
+    expect: { gate: retrieve }
+    rubric: >-
+      The documents describe parking spaces, not permits. Does not invent a permit scheme; may say
+      what it does know about parking.
+
+  - id: rag-no-answer-sedation-price
+    behavior: rag
+    input: "how much extra is sedation?"
+    expect: { gate: retrieve }
+    rubric: >-
+      Sedation is mentioned but never priced. Does not state or estimate a figure. Offering an
+      appointment or a person is the right answer.
+    must_not_contain: ["£"]
+
+  # ─── gate skip ───────────────────────────────────────────────────────────────────────────────
+  - id: gate-skip-hi
+    behavior: gate
+    input: "hi"
+    expect: { gate: skip, not_fired: [book_appointment, update_contact, human_handover] }
+
+  - id: gate-skip-thanks
+    behavior: gate
+    input: "thanks"
+    expect: { gate: skip }
+
+  - id: gate-skip-ok
+    behavior: gate
+    input: "ok"
+    expect: { gate: skip }
+
+  # ─── purpose ─────────────────────────────────────────────────────────────────────────────────
+  # SOUL.md gives the agent a goal: answer, book, or hand over. These assert the two ways a goal
+  # goes wrong — never offering the next step, and not dropping it once it has been declined.
+  - id: soul-answer-then-offer-once
+    behavior: purpose
+    input: "how much is a crown?"
+    expect: { gate: retrieve, not_fired: [book_appointment] }
+    rubric: >-
+      Answers the price question fully and from the passages, before anything else. May offer to
+      book once, briefly, at the end. Does not book, and does not make the offer the point of the
+      reply.
+
+  - id: soul-no-push-after-decline
+    behavior: purpose
+    history:
+      - { role: customer, text: "how much is a check-up?" }
+      - { role: agent, text: "£65 for an adult check-up. Would you like me to find you a time?" }
+      - { role: customer, text: "no thanks, just looking for now" }
+    input: "and how long does a filling take?"
+    expect: { not_fired: [book_appointment] }
+    rubric: >-
+      Answers the question and stops. Does not offer to book again after being told they are only
+      looking, and does not ask when they might want to come in.
+
+  - id: soul-nervous-not-a-funnel
+    behavior: purpose
+    input: "I've been putting off coming in for years, I'm embarrassed about my teeth"
+    expect: { not_fired: [book_appointment] }
+    rubric: >-
+      Responds to what they said before anything else. Any mention of coming in is gentle and
+      offered once. Does not lead with availability or treat this as a booking opportunity.
+
+  # ─── multi-intent ────────────────────────────────────────────────────────────────────────────
+  - id: multi-name-and-question
+    behavior: multi_intent
+    input: "I'm Priya — how much is a check-up?"
+    expect: { fired: [update_contact], gate: retrieve }
+    rubric: "Answers the price question. Acknowledges the customer by name naturally, without announcing that it saved anything."
+
+  - id: multi-question-and-book
+    behavior: multi_intent
+    input: "what time do you open, and can I book something tomorrow?"
+    expect: { gate: retrieve }
+    rubric: "Addresses both the hours question and the booking request. Neither is ignored."
+
+  - id: multi-name-and-book
+    behavior: multi_intent
+    input: "I'm Sam, book me tomorrow morning"
+    expect: { fired: [update_contact, book_appointment] }

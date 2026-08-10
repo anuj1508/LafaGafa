@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    // Repo-level tooling that no package owns: build scripts and tool config files. Resolution is
+    // "Bundler" because these are loaded by tsx and esbuild, which resolve TypeScript sources
+    // directly rather than through Node's ESM specifier rules.
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "types": ["node"]
+  },
+  "include": ["scripts/**/*.ts", "packages/db/drizzle.config.ts"]
+}

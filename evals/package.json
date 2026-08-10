@@ -1,0 +1,34 @@
+{
+  "name": "@harness/evals",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "eval:deterministic": "vitest run deterministic",
+    "eval:gate": "tsx gate/run.ts",
+    "eval:behaviour": "tsx behaviour/run.ts",
+    "eval:judge": "tsx judge/run.ts",
+    "bench": "tsx bench/run.ts",
+    "eval:review": "tsx review/run.ts"
+  },
+  "dependencies": {
+    "@harness/config": "workspace:*",
+    "@harness/core": "workspace:*",
+    "@harness/db": "workspace:*",
+    "@harness/ghl": "workspace:*",
+    "@harness/skills-ghl": "workspace:*",
+    "dotenv": "^16.4.5",
+    "yaml": "^2.5.0"
+  },
+  "devDependencies": {
+    "@ai-sdk/provider": "^4.0.7",
+    "ai": "^7.0.58",
+    "tsx": "^4.17.0",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5",
+    "zod": "^3.25.76"
+  }
+}

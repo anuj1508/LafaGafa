@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Harness dev chat</title>
+    <style>
+      body {
+        font:
+          15px/1.5 system-ui,
+          sans-serif;
+        margin: 0 auto;
+        max-width: 40rem;
+        padding: 1.5rem;
+      }
+      #thread {
+        border: 1px solid #d4d4d8;
+        border-radius: 6px;
+        height: 24rem;
+        overflow-y: auto;
+        padding: 0.75rem;
+      }
+      .msg {
+        margin: 0.35rem 0;
+        padding: 0.4rem 0.6rem;
+        border-radius: 6px;
+        max-width: 80%;
+      }
+      .me {
+        background: #dbeafe;
+        margin-left: auto;
+      }
+      .them {
+        background: #f4f4f5;
+      }
+      form {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+      }
+      input {
+        flex: 1;
+        padding: 0.5rem;
+      }
+      #events {
+        color: #71717a;
+        font:
+          12px/1.5 ui-monospace,
+          monospace;
+        margin-top: 1rem;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Harness dev chat</h1>
+    <p id="who">Opening a session...</p>
+    <div id="thread"></div>
+    <form id="composer">
+      <input id="text" autocomplete="off" placeholder="Type a message" disabled />
+      <button id="send" disabled>Send</button>
+    </form>
+    <div id="events"></div>
+
+    <script type="module">
+      const thread = document.getElementById("thread");
+      const events = document.getElementById("events");
+      let session = null;
+
+      const log = (line) => {
+        events.textContent += `${new Date().toISOString().slice(11, 23)}  ${line}\n`;
+        events.scrollTop = events.scrollHeight;
+      };
+
+      const bubble = (text, who) => {
+        const div = document.createElement("div");
+        div.className = `msg ${who}`;
+        div.textContent = text;
+        thread.append(div);
+        thread.scrollTop = thread.scrollHeight;
+      };
+
+      async function start() {
+        const res = await fetch("/api/chat/session", { method: "POST" });
+        if (!res.ok) {
+          document.getElementById("who").textContent = `Could not open a session: ${res.status}`;
+          log(await res.text());
+          return;
+        }
+        session = await res.json();
+        document.getElementById("who").textContent =
+          `contact ${session.contactId} · conversation ${session.conversationId}`;
+        log(`session ${session.sessionId}`);
+
+        const stream = new EventSource(`/api/chat/stream?sessionId=${session.sessionId}`);
+        stream.onmessage = (message) => {
+          const payload = JSON.parse(message.data);
+          if (payload.event === "reply") bubble(payload.text, "them");
+          else log(`${payload.event}: ${payload.stage ?? ""}`);
+        };
+        stream.onerror = () => log("stream error, browser will retry");
+
+        document.getElementById("text").disabled = false;
+        document.getElementById("send").disabled = false;
+      }
+
+      document.getElementById("composer").addEventListener("submit", async (submitEvent) => {
+        submitEvent.preventDefault();
+        const input = document.getElementById("text");
+        const text = input.value.trim();
+        if (!text || !session) return;
+        input.value = "";
+        bubble(text, "me");
+
+        const res = await fetch("/api/chat/message", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ sessionId: session.sessionId, text }),
+        });
+        if (!res.ok) log(`send failed ${res.status}: ${await res.text()}`);
+      });
+
+      start();
+    </script>
+  </body>
+</html>

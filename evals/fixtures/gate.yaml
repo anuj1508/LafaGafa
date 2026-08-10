@@ -1,0 +1,86 @@
+# Labelled gate cases.
+#
+# `retrieve` is the ground truth: would answering this need the business's own documents?
+# Not "is it about dentistry" — "would a receptionist have to look something up".
+#
+# The two failures are not equal. A false skip is a customer told "I don't know" about something
+# written down; a false retrieve costs a couple of seconds. Recall is the number to protect.
+
+suite: retrieval-gate
+
+cases:
+  # Chit-chat — nothing to look up.
+  - { id: chat-hi, input: "hi", retrieve: false }
+  - { id: chat-hello, input: "hello", retrieve: false }
+  - { id: chat-morning, input: "good morning", retrieve: false }
+  - { id: chat-thanks, input: "thanks", retrieve: false }
+  - { id: chat-thanks-long, input: "thank you so much", retrieve: false }
+  - { id: chat-cheers, input: "cheers", retrieve: false }
+  - { id: chat-ok, input: "ok", retrieve: false }
+  - { id: chat-great, input: "great", retrieve: false }
+  - { id: chat-yes, input: "yes", retrieve: false }
+  - { id: chat-no, input: "no", retrieve: false }
+  - { id: chat-bye, input: "bye", retrieve: false }
+  - { id: chat-perfect, input: "perfect, thanks", retrieve: false }
+
+  # The customer telling us about themselves — a write, not a read.
+  - { id: give-name, input: "I'm Priya Sharma", retrieve: false }
+  - { id: give-email, input: "my email is priya@example.com", retrieve: false }
+  - { id: give-phone, input: "you can reach me on 07700 900123", retrieve: false }
+  - { id: give-both, input: "I'm Anuj and my number is 07700 900456", retrieve: false }
+  - { id: confirm-email, input: "yes that's the right email", retrieve: false }
+
+  # Asking us to do something.
+  - { id: act-book, input: "book me an appointment tomorrow at 8:30", retrieve: false }
+  - { id: act-book-2, input: "can you book me in for next Tuesday", retrieve: false }
+  - { id: act-cancel, input: "cancel my appointment", retrieve: false }
+  - { id: act-reschedule, input: "reschedule me to Friday please", retrieve: false }
+  - { id: act-move, input: "move it to the afternoon", retrieve: false }
+  - { id: act-pick-slot, input: "9:30 works", retrieve: false }
+  - { id: act-pick-slot-2, input: "the first one please", retrieve: false }
+  - { id: act-human, input: "get me a real person", retrieve: false }
+
+  # Straight knowledge-base questions.
+  - { id: kb-hours, input: "what time do you open?", retrieve: true }
+  - { id: kb-saturday, input: "are you open on saturdays?", retrieve: true }
+  - { id: kb-bank-holiday, input: "are you open on a bank holiday monday?", retrieve: true }
+  - { id: kb-price-checkup, input: "how much is a check-up?", retrieve: true }
+  - { id: kb-price-rootcanal, input: "how much is a root canal on a molar?", retrieve: true }
+  - { id: kb-price-whitening, input: "what does teeth whitening cost", retrieve: true }
+  - { id: kb-parking, input: "is there parking?", retrieve: true }
+  - { id: kb-nhs, input: "do you take NHS patients?", retrieve: true }
+  - { id: kb-cancellation, input: "what happens if I need to cancel?", retrieve: true }
+  - { id: kb-late, input: "what if I'm running late", retrieve: true }
+  - { id: kb-children, input: "do you see kids?", retrieve: true }
+  - { id: kb-nervous, input: "do you do anything for nervous patients?", retrieve: true }
+  - {
+      id: kb-hygienist-direct,
+      input: "can I see a hygienist without seeing a dentist first?",
+      retrieve: true,
+    }
+  - { id: kb-membership, input: "tell me about your membership plan", retrieve: true }
+  - { id: kb-payment-plan, input: "can I pay in instalments?", retrieve: true }
+  - { id: kb-emergency, input: "I've knocked a tooth out, what do I do?", retrieve: true }
+  - { id: kb-xray-safety, input: "are dental x-rays safe in pregnancy?", retrieve: true }
+  - { id: kb-first-visit, input: "what happens at a first appointment?", retrieve: true }
+  - { id: kb-access, input: "is the practice wheelchair accessible?", retrieve: true }
+  - { id: kb-records, input: "how do I get a copy of my records?", retrieve: true }
+
+  # Phrased casually, or wearing a greeting. Still questions.
+  - { id: casual-refunds, input: "do you guys do refunds tho", retrieve: true }
+  - { id: casual-open, input: "yo are you lot open sunday", retrieve: true }
+  - { id: greeting-then-question, input: "hi, how much is a filling?", retrieve: true }
+  - { id: thanks-then-question, input: "thanks! and do you do implants?", retrieve: true }
+
+  # Ambiguous — labelled by what a receptionist would actually do.
+  - { id: amb-hurt, input: "does it hurt?", retrieve: true }
+  - { id: amb-how-long, input: "how long does it take?", retrieve: true }
+  - { id: amb-worth-it, input: "is it worth it?", retrieve: false }
+  - { id: amb-what-do-you-think, input: "what do you think I should do?", retrieve: false }
+
+  # Absent from the knowledge base. The gate should still retrieve — deciding there is no answer
+  # is retrieval's job, not the gate's, and skipping here is how an agent invents one.
+  - { id: gap-refund, input: "what's your refund policy if I'm unhappy?", retrieve: true }
+  - { id: gap-implant-price, input: "how much for a dental implant?", retrieve: true }
+  - { id: gap-dentist-quals, input: "which dentist is best for veneers?", retrieve: true }
+  - { id: gap-insurance, input: "do you deal with Bupa claims?", retrieve: true }
