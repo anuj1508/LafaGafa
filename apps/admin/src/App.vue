@@ -32,6 +32,10 @@ const staffSection = computed(() => route.value.params[0] ?? "traces");
 
 const view = computed(() => {
   const path = route.value.path;
+  // The root is the marketing page whether or not anyone is signed in. Everything below is a
+  // fallthrough to the dashboard, so without this an existing session moves the product's front
+  // door, which is not what a landing page is for.
+  if (path === "") return "marketing";
   if (path === "admin") return staff.value ? "admin" : "admin-signin";
   if (path === "signin") return "signin";
   if (path === "signup") return "signup";

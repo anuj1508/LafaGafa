@@ -52,6 +52,9 @@ guardrail that returns silence is a customer left waiting.
 
 ## Setup
 
+The order matters. Each step produces something the next one needs, and two of the values in
+`settings.yaml` do not exist until the marketplace app does.
+
 ### 1. Clone and install
 
 ```bash
@@ -59,58 +62,24 @@ git clone <repo-url> && cd Itachi-AI
 pnpm install
 ```
 
-### 2. Set up the database
+### 2. Start the tunnel
 
-Point `DATABASE_URL` at a Postgres that has pgvector, then create the schema:
-
-```bash
-cp .env.example .env          # fill in DATABASE_URL first
-pnpm db:migrate               # 8 tables, 17 indexes, the pgvector extension
-```
-
-One migration file, `packages/db/migrations/0000_futuristic_shriek.sql`, generated from
-`packages/db/src/schema.ts`. It is idempotent, so running it against an up-to-date database does
-nothing.
-
-### 3. Fill in the environment
+Do this first, because every URL you paste into HighLevel is built from it.
 
 ```bash
-cp .env.example .env
+ngrok http 3000
 ```
 
-| Variable                       | Where it comes from                                       |
-| ------------------------------ | --------------------------------------------------------- |
-| `DATABASE_URL`                 | your Postgres connection string                           |
-| `GHL_APP_CLIENT_ID`            | marketplace app, Settings                                 |
-| `GHL_APP_CLIENT_SECRET`        | marketplace app, Settings                                 |
-| `GHL_APP_SSO_KEY`              | marketplace app, Settings, used for embedded custom pages |
-| `ANTHROPIC_API_KEY`            | console.anthropic.com                                     |
-| `OPENAI_API_KEY`               | platform.openai.com, required for embeddings              |
-| `GOOGLE_GENERATIVE_AI_API_KEY` | aistudio.google.com                                       |
-| `PORT`                         | defaults to 3000                                          |
+Keep the URL. A free ngrok account gives a static domain, which is worth having: a URL that changes
+on restart means editing three fields in HighLevel every time.
 
-### 4. Fill in the settings
-
-```bash
-cp settings.example.yaml settings.yaml
-```
-
-Three values must be replaced, and all three come from the sandbox setup below:
-
-- `locationId`, the sandbox sub-account id
-- `ghl.conversationProviderId`, from the conversation provider you register
-- `calendar.calendarId`, or leave it `null` to use the first active calendar
-
-Everything else has a working default. `settings.yaml` is where an operator changes model chain,
-handover triggers, writable contact fields, relevance floor and timeouts, without touching code.
-
-### 5. Set up the GoHighLevel sandbox
+### 3. Create the HighLevel app
 
 1. Create a developer account at [marketplace.gohighlevel.com](https://marketplace.gohighlevel.com)
    and create a **sandbox sub-account** from the agency dashboard.
-2. **Create an app.** Marketplace, My Apps, Create App. Distribution type **Sub-Account**.
+2. **My Apps, Create App.** Distribution type **Sub-Account**.
 3. **Redirect URL:** `https://<your-tunnel>/oauth/callback`
-4. **Add scopes.** The harness needs all of these:
+4. **Scopes.** All of these:
 
    | Scope                            | Used for                           |
    | -------------------------------- | ---------------------------------- |
@@ -125,40 +94,97 @@ handover triggers, writable contact fields, relevance floor and timeouts, withou
    | `calendars/events.write`         | creating the appointment           |
    | `locations.readonly`             | resolving the sub-account          |
 
-5. **Register a conversation provider.** In the app, add a Conversation Provider of type SMS.
-   Delivery URL: `https://<your-tunnel>/webhooks/ghl/provider-outbound`. Copy the provider id into
-   `settings.yaml` as `ghl.conversationProviderId`.
-6. **Add the inbound webhook.** Event `InboundMessage`, URL
-   `https://<your-tunnel>/webhooks/ghl`.
-7. **Copy the location id** from the sandbox sub-account settings into `settings.yaml` as
-   `locationId`.
-8. **Install the app** on your sandbox sub-account. This is what writes the OAuth token into the
-   `installations` table, and nothing works until it has happened.
+5. **Webhooks.** Both are needed:
 
-### 6. Index the knowledge base
+   | Event             | URL                                  | Why                                                   |
+   | ----------------- | ------------------------------------ | ----------------------------------------------------- |
+   | `InboundMessage`  | `https://<your-tunnel>/webhooks/ghl` | the only thing that triggers the agent                |
+   | `OutboundMessage` | `https://<your-tunnel>/webhooks/ghl` | how the harness notices a human replied and backs off |
+
+6. **Conversation provider.** Add one of type SMS, delivery URL
+   `https://<your-tunnel>/webhooks/ghl/provider-outbound`. This is what the agent's replies are sent
+   through. **Copy its id.**
+7. From the app's Settings page, copy the **client id**, **client secret** and **SSO key**.
+8. From the sandbox sub-account, copy the **location id**.
+
+### 4. Fill in the environment
+
+```bash
+cp .env.example .env
+```
+
+| Variable                       | Where it comes from                                                                           |
+| ------------------------------ | --------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`                 | your Postgres connection string                                                               |
+| `GHL_APP_CLIENT_ID`            | step 3.7                                                                                      |
+| `GHL_APP_CLIENT_SECRET`        | step 3.7                                                                                      |
+| `GHL_APP_SSO_KEY`              | step 3.7, used for embedded custom pages                                                      |
+| `OPENAI_API_KEY`               | platform.openai.com. Required even if you run Claude or Gemini, because embeddings are OpenAI |
+| `ANTHROPIC_API_KEY`            | console.anthropic.com                                                                         |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | aistudio.google.com                                                                           |
+| `PORT`                         | defaults to 3000                                                                              |
+
+### 5. Fill in the settings
+
+```bash
+cp settings.example.yaml settings.yaml
+```
+
+Two values come from step 3 and have no defaults:
+
+- `locationId`, from step 3.8
+- `ghl.conversationProviderId`, from step 3.6
+
+`calendar.calendarId` can stay `null`, which uses the first active calendar. Everything else has a
+working default. This file is where an operator changes the model chain, handover triggers, writable
+contact fields, the relevance floor and timeouts, without touching code.
+
+`settings.yaml` is read once at boot. Editing it needs a server restart, because `tsx watch` only
+watches TypeScript.
+
+### 6. Create the database schema
+
+```bash
+pnpm db:migrate
+```
+
+Eight tables, seventeen indexes and the pgvector extension, from the single migration in
+`packages/db/migrations/`. Idempotent, so running it against an up-to-date database does nothing.
+
+### 7. Start the server and install the app
+
+```bash
+pnpm dev
+```
+
+Then install the app onto your sandbox sub-account from the marketplace. The OAuth callback writes
+the refresh token into `installations`, and **nothing works until this has happened**. There is no
+way to skip it: every CRM call needs that token.
+
+### 8. Index the knowledge base
 
 ```bash
 pnpm kb:ingest
 ```
 
-Reads every markdown file under `kb/`, chunks it, embeds it, and replaces what is indexed. 19
-documents become 80 chunks. This calls the OpenAI embeddings API.
+Reads every markdown file under `kb/`, chunks it, embeds it and replaces what is indexed. 19
+documents become 80 chunks. This calls the OpenAI embeddings API and fails fast without
+`OPENAI_API_KEY`, so step 4 has to be done first.
 
-### 7. Run it
+Until this runs, the agent answers every factual question with a refusal, which is correct behaviour
+against an empty knowledge base and looks exactly like a bug.
 
-Four terminals:
+### 9. Run the surfaces
 
 ```bash
 pnpm dev                            # harness server        :3000
 pnpm --filter @harness/chat dev     # practice website      :5175
-pnpm --filter @harness/admin dev    # admin and console     :5174
-ngrok http 3000                     # public URL for GHL
+pnpm --filter @harness/admin dev    # product and console   :5174
 ```
 
-Put the ngrok URL into the two GHL fields from step 5, then open
-[localhost:5175](http://localhost:5175) and talk to the widget in the corner.
+Open [localhost:5175](http://localhost:5175) and talk to the widget in the corner.
 
-### 8. Check it works
+### 10. Check it works
 
 ```bash
 pnpm verify                 # build, typecheck, unit tests, lint, dead code, formatting
@@ -168,6 +194,17 @@ pnpm trace                  # the turns you just created, as a waterfall
 
 `pnpm gate --all-providers --keep-going` runs the suites against all three vendors and is what
 produced [docs/eval-results.md](docs/eval-results.md).
+
+### Why the chat widget goes through the CRM
+
+The widget does not call the agent. It posts to `/conversations/messages/inbound`, HighLevel records
+the message and fires the `InboundMessage` webhook back, and that is what runs the turn. So a demo
+message takes the identical path a real SMS takes, which is the point: the loop is proven end to end
+rather than in a shortcut that only works for the demo.
+
+The cost is that the widget needs the tunnel and the app install, and a turn pays two extra network
+round trips. If you want the loop without any of that, `pnpm dev:cli` runs turns against the real
+harness, real gate, real retrieval and real skills, with no CRM, webhook or tunnel.
 
 ## Where to watch it work
 

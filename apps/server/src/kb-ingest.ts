@@ -40,7 +40,9 @@ const chunks: Chunk[] = [];
 // half of a glob syntax is worse than saying plainly that this is a directory of markdown.
 const entries = await readdir(docsDir, { recursive: true, withFileTypes: true });
 const files = entries
-  .filter((entry) => entry.isFile() && entry.name.endsWith(".md"))
+  .filter(
+    (entry) => entry.isFile() && entry.name.endsWith(".md") && !entry.name.startsWith("README.md"),
+  )
   .map((entry) => join(entry.parentPath, entry.name));
 
 for (const file of files) {

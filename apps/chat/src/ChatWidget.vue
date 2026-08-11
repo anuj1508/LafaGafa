@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onMounted, ref, watch } from "vue";
+import { nextTick, ref, watch } from "vue";
 
 interface Session {
   sessionId: string;
@@ -20,7 +20,7 @@ const messages = ref<Array<{ text: string; mine: boolean }>>([]);
 const draft = ref("");
 const session = ref<Session | null>(null);
 const working = ref(false);
-const status = ref("connecting");
+const status = ref("online");
 const thread = ref<HTMLElement | null>(null);
 const field = ref<HTMLInputElement | null>(null);
 
@@ -29,12 +29,7 @@ async function scrollDown() {
   thread.value?.scrollTo({ top: thread.value.scrollHeight, behavior: "smooth" });
 }
 
-/**
- * Opens the stream before the first message is sent.
- *
- * A reply can arrive faster than the stream can be established otherwise, and the customer would
- * simply never see it.
- */
+/** Attached before the first message is posted, so a reply cannot arrive before anyone is reading. */
 function listen(sessionId: string) {
   const stream = new EventSource(`/api/chat/stream?sessionId=${sessionId}`);
   stream.onmessage = (event: MessageEvent<string>) => {
@@ -52,16 +47,26 @@ function listen(sessionId: string) {
   };
 }
 
-onMounted(async () => {
+/*
+ * Created on the first message, never on page load.
+ *
+ * Opening a session mints a real CRM contact and conversation, so doing it eagerly filed an empty
+ * conversation against a "Web Visitor" contact every time anybody refreshed the page.
+ */
+async function ensureSession(): Promise<Session | null> {
+  if (session.value) return session.value;
   try {
     const response = await fetch("/api/chat/session", { method: "POST" });
     if (!response.ok) throw new Error(await response.text());
-    session.value = (await response.json()) as Session;
-    listen(session.value.sessionId);
+    const started = (await response.json()) as Session;
+    listen(started.sessionId);
+    session.value = started;
+    return started;
   } catch (error) {
     status.value = error instanceof Error ? error.message : "could not connect";
+    return null;
   }
-});
+}
 
 watch(open, async (isOpen) => {
   if (!isOpen) return;
@@ -72,18 +77,22 @@ watch(open, async (isOpen) => {
 
 async function send(text: string) {
   const body = text.trim();
-  if (!body || !session.value) return;
+  if (!body || working.value) return;
   draft.value = "";
   messages.value.push({ text: body, mine: true });
   working.value = true;
   void scrollDown();
 
-  const response = await fetch("/api/chat/message", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ sessionId: session.value.sessionId, text: body }),
-  });
-  if (!response.ok) {
+  const active = await ensureSession();
+  const response = active
+    ? await fetch("/api/chat/message", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ sessionId: active.sessionId, text: body }),
+      })
+    : null;
+
+  if (!response?.ok) {
     working.value = false;
     messages.value.push({ text: "That didn't send. Try again?", mine: false });
   }
@@ -138,12 +147,12 @@ async function send(text: string) {
             ref="field"
             v-model="draft"
             placeholder="Type a message"
-            :disabled="!session"
+            :disabled="working"
             autocomplete="off"
           />
           <button
             class="send"
-            :disabled="!session || draft.trim().length === 0"
+            :disabled="working || draft.trim().length === 0"
             aria-label="Send message"
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
