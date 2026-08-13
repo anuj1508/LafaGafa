@@ -123,8 +123,14 @@ export interface TurnSentEvent extends BaseEvent {
   type: "turn_sent";
   /** Webhook arrival to the send returning. Debounce included; it is real customer-visible time. */
   webhookToSendMs: number;
-  /** How much of that was the CRM answering, so a slow vendor is not read as a slow harness. */
+  /** Waiting, not working: the debounce window plus queue handoff, before the loop starts. */
+  queuedMs: number;
+  /** The loop itself — gate, retrieval, model, skills. Mirrors `turn_end.totalLatencyMs`. */
+  loopMs: number;
+  /** Every CRM round trip, so a slow vendor is not read as a slow harness. */
   crmMs: number;
+  /** The reply POST alone, which is the only CRM call on the critical path after the loop. */
+  sendMs: number;
   /** Which vendor answered, so actuals can be reported per provider without a join. */
   provider: string | null;
   retrieved: boolean;

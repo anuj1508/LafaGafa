@@ -55,6 +55,7 @@ export async function createAppContext(): Promise<AppContext> {
   const env = loadEnv();
   const settings = await loadSettings(fromRepoRoot(env.SETTINGS_PATH), {
     ...(env.MODEL_PROVIDER ? { preferProvider: env.MODEL_PROVIDER } : {}),
+    ...(env.DEBOUNCE_MS === undefined ? {} : { debounceMs: env.DEBOUNCE_MS }),
   });
   const promoteProvider = (provider: string): void => {
     const chosen = settings.model.chain.find((entry) => entry.provider === provider);

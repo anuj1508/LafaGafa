@@ -28,6 +28,7 @@
     "eval:behaviour": "pnpm --filter @harness/evals eval:behaviour",
     "eval:judge": "pnpm --filter @harness/evals eval:judge",
     "bench": "pnpm --filter @harness/evals bench",
+    "bench:webhook": "pnpm --filter @harness/evals bench:webhook",
     "gate": "tsx scripts/gate.ts",
     "db:reset": "pnpm --filter @harness/server db:reset",
     "db:migrate": "pnpm --filter @harness/db db:migrate",

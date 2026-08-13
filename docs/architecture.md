@@ -307,6 +307,13 @@ the loop would flatter the harness by leaving out the queue, the history fetch a
 are real time a customer waits. Debounce is deliberately inside the number: the clock starts at the
 earliest message of a batch, which is when the customer stopped being answered.
 
+`turn_sent` therefore carries its own arithmetic: `queuedMs` (waiting, not working), `loopMs`,
+`crmMs` and `sendMs`. The first measurement showed why that matters — a turn whose loop took 2417 ms
+kept the customer waiting 7265 ms, and 4000 ms of the gap was the debounce window rather than
+anything slow. A total nobody can decompose invites exactly the wrong fix. The default is now
+1000 ms, overridable with `DEBOUNCE_MS` because a deployment's settings file can be a read-only
+secret mount.
+
 `crm_call` is what makes the difference legible. It is emitted from an axios interceptor in
 `packages/ghl`, which may not import `core`, so the client takes a plain `onCall` callback and the
 edge turns it into a trace event. The active turn is found through an `AsyncLocalStorage` rather

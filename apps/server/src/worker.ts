@@ -73,6 +73,8 @@ export function createAgentWorker(deps: WorkerDeps) {
     // Ambient for the whole turn so the shared GHL client can attribute a round trip
     // to the turn that caused it. See docs/architecture.md#slo-clock.
     return withTracer(tracer, async () => {
+      // Everything before this was waiting, not working: the debounce window and the queue.
+      const startedWorkingAt = Date.now();
       tracer.emit({ type: "turn_start", input: request.body, messageIds: request.messageIds });
 
       const session: Session = {
@@ -180,16 +182,23 @@ export function createAgentWorker(deps: WorkerDeps) {
         (event): event is Extract<TraceEvent, { type: "llm_call" }> =>
           event.type === "llm_call" && event.role === "chat",
       );
+      const crmCalls = tracer.events.filter(
+        (event): event is Extract<TraceEvent, { type: "crm_call" }> => event.type === "crm_call",
+      );
+      const loopEnd = tracer.events.find(
+        (event): event is Extract<TraceEvent, { type: "turn_end" }> => event.type === "turn_end",
+      );
 
       // The SLO clock, closed here because the send is the "to send" half of it. `turn_end`
       // measures the loop only. See docs/architecture.md#slo-clock.
       tracer.emit({
         type: "turn_sent",
         webhookToSendMs: Date.now() - request.receivedAt,
-        crmMs: tracer.events.reduce(
-          (total, event) => (event.type === "crm_call" ? total + event.latencyMs : total),
-          0,
-        ),
+        queuedMs: startedWorkingAt - request.receivedAt,
+        loopMs: loopEnd?.totalLatencyMs ?? 0,
+        crmMs: crmCalls.reduce((total, call) => total + call.latencyMs, 0),
+        // The last one is the reply POST; the earlier ones fetched history before the loop.
+        sendMs: crmCalls.at(-1)?.latencyMs ?? 0,
         provider: chatCall?.provider ?? null,
         retrieved: tracer.events.some((event) => event.type === "rag_retrieve"),
       });

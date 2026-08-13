@@ -29,6 +29,12 @@ export const envSchema = z.object({
   MODEL_PROVIDER: z.enum(["anthropic", "openai", "google"]).optional(),
 
   /**
+   * Overrides `behavior.debounceMs`. Here as well as in settings because it dominates the
+   * webhook-to-send clock, and a deployment's settings file can be a read-only mount.
+   */
+  DEBOUNCE_MS: z.coerce.number().int().nonnegative().optional(),
+
+  /**
    * Browser origins allowed to call this server cross-origin, comma-separated.
    * Empty in dev, where the Vite proxy puts the apps on one origin. See #cors.
    */

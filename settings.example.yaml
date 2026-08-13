@@ -121,7 +121,9 @@ contactCapture:
 
 behavior:
   replyCap: 20
-  debounceMs: 4000
+  # How long to wait for more messages before answering. It is the largest single component of
+  # webhook-to-send, so it is a latency choice as much as a UX one. Override with DEBOUNCE_MS.
+  debounceMs: 1000
   quietHours:
     enabled: false
     timezone: America/New_York

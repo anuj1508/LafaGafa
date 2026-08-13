@@ -12,6 +12,7 @@
     "eval:behaviour": "tsx behaviour/run.ts",
     "eval:judge": "tsx judge/run.ts",
     "bench": "tsx bench/run.ts",
+    "bench:webhook": "tsx bench/webhook.ts",
     "eval:review": "tsx review/run.ts"
   },
   "dependencies": {
