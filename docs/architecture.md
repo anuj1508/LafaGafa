@@ -295,6 +295,23 @@ Kept in memory. A restart drops pending batches and in-flight turns, and two ins
 debounce their own share of a burst. Both acceptable for a single-instance deployment, neither
 hidden by the interface.
 
+### The chat surface is reached directly, not proxied {#cors}
+
+In development the Vite proxy puts the chat app and the server on one origin, so `/api` is a
+same-origin path and nothing needs CORS. A deployment that serves the app as static files from a
+CDN cannot repeat the trick: the CDN's rewrite buffers a response until it completes, and the SSE
+reply stream never completes, so the widget receives nothing at all while the server has already
+written the reply. Measured against Render's rewrite: zero bytes in twenty seconds, no headers.
+
+So the deployed widget calls the server's own origin, `VITE_API_BASE` at build time, and the server
+answers cross-origin requests from an allowlist in `CORS_ALLOWED_ORIGINS`. The allowlist is
+environment rather than settings because it is deployment wiring, like `PORT`. No credentials mode:
+the session id travels in the query string and there are no cookies. An empty allowlist disables
+the middleware entirely, which is what dev and the tests run with.
+
+The admin console has no streaming endpoint, so a CDN rewrite serves it correctly and it stays on
+one.
+
 ## The console
 
 ### Scope is a place, not a filter {#scope-is-a-place}

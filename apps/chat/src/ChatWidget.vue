@@ -7,6 +7,12 @@ interface Session {
   conversationId: string;
 }
 
+/**
+ * Absolute in deployment, empty in dev where Vite proxies `/api` onto one origin.
+ * A CDN proxy buffers the reply stream until it ends, so it has to be reached directly.
+ */
+const API = import.meta.env.VITE_API_BASE ?? "";
+
 const AGENT_NAME = "Clare";
 
 const OPENERS = [
@@ -31,7 +37,7 @@ async function scrollDown() {
 
 /** Attached before the first message is posted, so a reply cannot arrive before anyone is reading. */
 function listen(sessionId: string) {
-  const stream = new EventSource(`/api/chat/stream?sessionId=${sessionId}`);
+  const stream = new EventSource(`${API}/api/chat/stream?sessionId=${sessionId}`);
   stream.onmessage = (event: MessageEvent<string>) => {
     const payload = JSON.parse(event.data) as { event: string; text?: string };
     if (payload.event !== "reply") return;
@@ -56,7 +62,7 @@ function listen(sessionId: string) {
 async function ensureSession(): Promise<Session | null> {
   if (session.value) return session.value;
   try {
-    const response = await fetch("/api/chat/session", { method: "POST" });
+    const response = await fetch(`${API}/api/chat/session`, { method: "POST" });
     if (!response.ok) throw new Error(await response.text());
     const started = (await response.json()) as Session;
     listen(started.sessionId);
@@ -85,7 +91,7 @@ async function send(text: string) {
 
   const active = await ensureSession();
   const response = active
-    ? await fetch("/api/chat/message", {
+    ? await fetch(`${API}/api/chat/message`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ sessionId: active.sessionId, text: body }),

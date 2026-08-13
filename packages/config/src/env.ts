@@ -28,6 +28,20 @@ export const envSchema = z.object({
   /** Promotes one provider to the head of the chat chain. Reorders only; never adds. */
   MODEL_PROVIDER: z.enum(["anthropic", "openai", "google"]).optional(),
 
+  /**
+   * Browser origins allowed to call this server cross-origin, comma-separated.
+   * Empty in dev, where the Vite proxy puts the apps on one origin. See #cors.
+   */
+  CORS_ALLOWED_ORIGINS: z
+    .string()
+    .optional()
+    .transform((value) =>
+      (value ?? "")
+        .split(",")
+        .map((origin) => origin.trim())
+        .filter((origin) => origin.length > 0),
+    ),
+
   SETTINGS_PATH: z.string().default("./settings.yaml"),
 });
 

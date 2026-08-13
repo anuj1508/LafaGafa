@@ -6,7 +6,7 @@
  * structure — a canvas with panels on it — because that was the part that worked.
  */
 
-.ad-shell {
+.cn-shell {
   --ad-bg: #0d1117;
   --ad-panel: #161b22;
   --ad-raise: #1c2230;
@@ -26,7 +26,7 @@
   font-family: var(--sans);
 }
 
-.ad-side {
+.cn-side {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -38,18 +38,18 @@
   height: 100vh;
 }
 
-.ad-brand {
+.cn-brand {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 4px 8px;
 }
 
-.ad-brand .wordmark {
+.cn-brand .wordmark {
   color: var(--ad-text);
 }
 
-.ad-brand .env {
+.cn-brand .env {
   padding: 1px 6px;
   border: 1px solid var(--ad-line);
   border-radius: 4px;
@@ -60,13 +60,13 @@
   color: var(--ad-dim);
 }
 
-.ad-nav {
+.cn-nav {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.ad-nav button {
+.cn-nav button {
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -79,28 +79,28 @@
   cursor: pointer;
 }
 
-.ad-nav button strong {
+.cn-nav button strong {
   font-size: 14px;
   font-weight: 550;
 }
 
-.ad-nav button small {
+.cn-nav button small {
   font-size: 11px;
   opacity: 0.75;
 }
 
-.ad-nav button:hover {
+.cn-nav button:hover {
   background: var(--ad-raise);
   color: var(--ad-text);
 }
 
-.ad-nav button.on {
+.cn-nav button.on {
   background: #7c5cff1f;
   color: var(--ad-text);
   box-shadow: inset 2px 0 0 var(--ad-accent);
 }
 
-.ad-user {
+.cn-user {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -109,18 +109,18 @@
   border-top: 1px solid var(--ad-line);
 }
 
-.ad-user > div {
+.cn-user > div {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
 }
 
-.ad-user strong {
+.cn-user strong {
   font-size: 13px;
 }
 
-.ad-user small {
+.cn-user small {
   font-size: 11px;
   color: var(--ad-dim);
   white-space: nowrap;
@@ -128,14 +128,14 @@
   text-overflow: ellipsis;
 }
 
-.ad-main {
+.cn-main {
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
 
 /* ── canvas ─── */
-.ad-canvas {
+.cn-canvas {
   flex: 1;
   padding: 22px 20px 60px;
   overflow-x: hidden;
@@ -143,124 +143,124 @@
 
 /* ── dark overrides for the shared pieces ──────────────────────────────────────────────────── */
 
-.ad-canvas .panel {
+.cn-canvas .panel {
   border-color: var(--ad-line);
   background: var(--ad-panel);
   box-shadow: none;
 }
 
-.ad-canvas .panel-head {
+.cn-canvas .panel-head {
   border-color: var(--ad-line);
 }
 
-.ad-canvas .panel-head h2 {
+.cn-canvas .panel-head h2 {
   color: var(--ad-text);
 }
 
-.ad-canvas .dim,
-.ad-canvas .panel-head .dim {
+.cn-canvas .dim,
+.cn-canvas .panel-head .dim {
   color: var(--ad-dim);
 }
 
-.ad-canvas table.data th {
+.cn-canvas table.data th {
   background: var(--ad-bg);
   border-color: var(--ad-line);
   color: var(--ad-dim);
 }
 
-.ad-canvas table.data td {
+.cn-canvas table.data td {
   border-color: var(--ad-line);
 }
 
-.ad-canvas table.data tr:hover td {
+.cn-canvas table.data tr:hover td {
   background: var(--ad-raise);
 }
 
-.ad-canvas .metrics article {
+.cn-canvas .metrics article {
   border-color: var(--ad-line);
   background: var(--ad-panel);
   box-shadow: none;
 }
 
-.ad-canvas .metrics article.accent {
+.cn-canvas .metrics article.accent {
   border-color: transparent;
   background: linear-gradient(150deg, #4b2ce0, #7c5cff);
 }
 
-.ad-canvas .m-label {
+.cn-canvas .m-label {
   color: var(--ad-dim);
 }
 
-.ad-canvas .m-value i {
+.cn-canvas .m-value i {
   font-style: normal;
   font-size: 17px;
   color: var(--ad-dim);
 }
 
-.ad-canvas .m-value.sm {
+.cn-canvas .m-value.sm {
   font-size: 19px;
 }
 
-.ad-canvas .steps-nav {
+.cn-canvas .steps-nav {
   border-color: var(--ad-line);
   background: var(--ad-panel);
 }
 
-.ad-canvas .steps-nav button {
+.cn-canvas .steps-nav button {
   color: var(--ad-dim);
 }
 
-.ad-canvas .steps-nav button.on {
+.cn-canvas .steps-nav button.on {
   background: #7c5cff1f;
   color: var(--ad-text);
 }
 
-.ad-canvas .steps-nav .count {
+.cn-canvas .steps-nav .count {
   background: var(--ad-bg);
   color: var(--ad-dim);
 }
 
-.ad-canvas .track {
+.cn-canvas .track {
   background: var(--ad-bg);
 }
 
-.ad-canvas .track span {
+.cn-canvas .track span {
   background: var(--ad-accent);
 }
 
-.ad-canvas .chip.live {
+.cn-canvas .chip.live {
   background: #3fb9502e;
   color: var(--ad-good);
 }
 
-.ad-canvas .chip.off {
+.cn-canvas .chip.off {
   background: var(--ad-raise);
   color: var(--ad-dim);
 }
 
-.ad-canvas .nudge {
+.cn-canvas .nudge {
   border-color: var(--ad-line);
   background: var(--ad-raise);
   color: var(--ad-dim);
 }
 
-.ad-canvas .good {
+.cn-canvas .good {
   color: var(--ad-good);
 }
-.ad-canvas .warn {
+.cn-canvas .warn {
   color: var(--ad-warn);
 }
-.ad-canvas .bad {
+.cn-canvas .bad {
   color: var(--ad-bad);
 }
 
-.ad-canvas code {
+.cn-canvas code {
   font-family: var(--mono);
   font-size: 12px;
   color: var(--ad-dim);
 }
 
-.ad-canvas pre {
+.cn-canvas pre {
   margin: 0;
   padding: 16px 20px;
   max-height: 460px;
@@ -273,13 +273,13 @@
   word-break: break-word;
 }
 
-.ad-canvas .empty {
+.cn-canvas .empty {
   padding: 24px 20px;
   color: var(--ad-dim);
   font-size: 13px;
 }
 
-.ad-canvas .mini {
+.cn-canvas .mini {
   border-color: var(--ad-line);
   background: var(--ad-panel);
   color: var(--ad-text);
@@ -548,7 +548,7 @@
 
 /* ── nav: grouped, with the value beside the label ─────────────────────────────────────────── */
 
-.ad-group {
+.cn-group {
   margin: 14px 0 4px;
   padding: 0 11px;
   font-size: 10.5px;
@@ -558,7 +558,7 @@
   color: #5c6773;
 }
 
-.ad-nav button {
+.cn-nav button {
   display: flex;
   align-items: center;
   padding: 7px 11px;
@@ -571,31 +571,31 @@
   cursor: pointer;
 }
 
-.ad-nav button:hover {
+.cn-nav button:hover {
   background: var(--ad-raise);
   color: var(--ad-text);
 }
 
-.ad-nav button.on {
+.cn-nav button.on {
   background: #7c5cff1f;
   color: var(--ad-text);
   font-weight: 550;
   box-shadow: inset 2px 0 0 var(--ad-accent);
 }
 
-.ad-nav .n {
+.cn-nav .n {
   margin-left: auto;
   font-family: var(--mono);
   font-size: 11.5px;
   color: #6e7a88;
 }
 
-.ad-nav .n.bad {
+.cn-nav .n.bad {
   color: var(--ad-bad);
   font-weight: 600;
 }
 
-.ad-search-btn {
+.cn-search-btn {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -609,11 +609,11 @@
   cursor: pointer;
 }
 
-.ad-search-btn:hover {
+.cn-search-btn:hover {
   border-color: var(--ad-accent);
 }
 
-.ad-search-btn svg {
+.cn-search-btn svg {
   width: 14px;
 }
 
@@ -628,7 +628,7 @@ kbd {
 
 /* ── breadcrumb, only when you are somewhere ───────────────────────────────────────────────── */
 
-.ad-crumbs {
+.cn-crumbs {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -1061,12 +1061,12 @@ kbd {
   font-size: 10px;
 }
 
-.ad-canvas .chip.bad {
+.cn-canvas .chip.bad {
   background: #f8514926;
   color: var(--ad-bad);
 }
 
-.ad-canvas .m-value.bad {
+.cn-canvas .m-value.bad {
   color: var(--ad-bad);
 }
 

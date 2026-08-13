@@ -74,14 +74,14 @@ onUnmounted(() => globalThis.removeEventListener("keydown", onKey));
 </script>
 
 <template>
-  <div class="ad-shell">
-    <aside class="ad-side">
-      <div class="ad-brand">
+  <div class="cn-shell">
+    <aside class="cn-side">
+      <div class="cn-brand">
         <span class="wordmark small"><span>Lafa</span>Gafa</span>
         <span class="env">admin</span>
       </div>
 
-      <button class="ad-search-btn" @click="paletteOpen = true">
+      <button class="cn-search-btn" @click="paletteOpen = true">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M11 19a8 8 0 100-16 8 8 0 000 16zM21 21l-4.35-4.35" />
         </svg>
@@ -89,9 +89,9 @@ onUnmounted(() => globalThis.removeEventListener("keydown", onKey));
         <kbd>⌘K</kbd>
       </button>
 
-      <nav class="ad-nav">
+      <nav class="cn-nav">
         <template v-for="group in GROUPS" :key="group.name">
-          <p class="ad-group">{{ group.name }}</p>
+          <p class="cn-group">{{ group.name }}</p>
           <button
             v-for="item in group.items"
             :key="item.id"
@@ -104,7 +104,7 @@ onUnmounted(() => globalThis.removeEventListener("keydown", onKey));
         </template>
       </nav>
 
-      <div class="ad-user">
+      <div class="cn-user">
         <div>
           <strong>{{ staff?.name }}</strong>
           <small>{{ staff?.email }}</small>
@@ -117,9 +117,9 @@ onUnmounted(() => globalThis.removeEventListener("keydown", onKey));
       </div>
     </aside>
 
-    <div class="ad-main">
+    <div class="cn-main">
       <!-- Only rendered once you are inside something. No permanent chrome saying "All". -->
-      <div v-if="scope.crumbs.length > 0 || scope.source !== 'live'" class="ad-crumbs">
+      <div v-if="scope.crumbs.length > 0 || scope.source !== 'live'" class="cn-crumbs">
         <button class="crumb-root" @click="scope.clear()">All customers</button>
         <template v-for="(crumb, index) in scope.crumbs" :key="crumb.id">
           <svg viewBox="0 0 24 24" class="crumb-sep" aria-hidden="true">
@@ -149,7 +149,7 @@ onUnmounted(() => globalThis.removeEventListener("keydown", onKey));
         </div>
       </div>
 
-      <main class="ad-canvas">
+      <main class="cn-canvas">
         <p v-if="store.offline" class="offline">
           Server offline on :3000 — start it with <code>pnpm dev</code>.
         </p>
