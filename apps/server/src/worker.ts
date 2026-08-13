@@ -219,9 +219,24 @@ export function createAgentWorker(deps: WorkerDeps) {
       });
 
       void recordKnowledgeGap(deps, request, tracer, turnId);
-
-      // Flushed after the reply is out, never before: tracing must not sit on the critical path.
-      void tracer.flush();
-    });
+    })
+      .catch((error: unknown) => {
+        // A send that throws used to take the whole trace with it, because the flush below was the
+        // last statement of a rejected function — losing exactly the turns worth reading.
+        tracer.emit({
+          type: "error",
+          stage: "send",
+          message: error instanceof Error ? error.message : String(error),
+        });
+        deps.logger.error("turn did not reach the customer", {
+          turnId,
+          conversationId: request.conversationId,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      })
+      .finally(() => {
+        // Flushed after the reply is out, never before: tracing must not sit on the critical path.
+        void tracer.flush();
+      });
   };
 }

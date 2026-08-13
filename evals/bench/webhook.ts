@@ -76,9 +76,25 @@ console.log(
     `\ntotal      ${String(cases.length * providers.length)} real turns\n`,
 );
 
+const byBehaviour = new Map<string, number>();
+for (const testCase of cases) {
+  byBehaviour.set(testCase.behavior, (byBehaviour.get(testCase.behavior) ?? 0) + 1);
+}
+console.log("per provider, by behaviour:");
+for (const [behavior, count] of [...byBehaviour].sort()) {
+  const total = corpus.filter((entry) => entry.behavior === behavior).length;
+  console.log(`  ${behavior.padEnd(16)} ${String(count).padStart(2)} of ${String(total)}`);
+}
+// RAG turns are excluded from the SLO and reported apart, so the split is worth knowing up front.
+const ragCases = cases.filter((entry) => entry.behavior === "rag").length;
+console.log(
+  `\nnon-RAG ${String(cases.length - ragCases)} per provider — the SLO rests on these` +
+    `\nRAG     ${String(ragCases)} per provider — reported separately\n`,
+);
+
 if (dryRun) {
-  console.log("Dry run. Nothing was sent. The first five inputs:\n");
-  for (const testCase of cases.slice(0, 5)) {
+  console.log("Dry run. Nothing was sent. Every case that would run:\n");
+  for (const testCase of cases) {
     console.log(`  ${testCase.id.padEnd(26)} ${testCase.behavior.padEnd(15)} ${testCase.input}`);
   }
   process.exit(0);
