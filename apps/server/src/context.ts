@@ -15,6 +15,7 @@ import { PostgresTokenStore } from "./token-store.js";
 import { JsonlTraceSink } from "./tracing/jsonl-sink.js";
 import { PgKnowledgeStore } from "./store/knowledge-store.js";
 import { PostgresTraceSink } from "./tracing/postgres-sink.js";
+import { currentTracer } from "./turn/tracer-context.js";
 import { createAgentWorker } from "./worker.js";
 
 /** The typed API surfaces, bound lazily to a location so one client serves every installation. */
@@ -71,6 +72,8 @@ export async function createAppContext(): Promise<AppContext> {
     clientId: env.GHL_APP_CLIENT_ID,
     clientSecret: env.GHL_APP_CLIENT_SECRET,
     tokens: new PostgresTokenStore(db),
+    // Outside a turn there is nothing to attribute the call to, so it goes unrecorded.
+    onCall: (call) => currentTracer()?.emit({ type: "crm_call", ...call }),
   });
 
   const contactsByLocation = new Map<string, ContactsApi>();

@@ -11,7 +11,7 @@ export {
   type HistoryMessage,
   type SendMessageInput,
 } from "./api/conversations.js";
-export { GhlClient, type GhlClientOptions } from "./client.js";
+export { GhlClient, type CrmCall, type GhlClientOptions } from "./client.js";
 export {
   providerOutboundMessageSchema,
   type ProviderOutboundMessage,

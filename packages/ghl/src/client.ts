@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance, isAxiosError } from "axios";
+import axios, { type AxiosInstance, type InternalAxiosRequestConfig, isAxiosError } from "axios";
 import { GhlApiError, classifyStatus } from "./errors.js";
 import type { TokenStore } from "./token-store.js";
 import { installationSchema, type StoredInstallation } from "./types.js";
@@ -6,11 +6,31 @@ import { installationSchema, type StoredInstallation } from "./types.js";
 /** Refresh this long before actual expiry so a turn never starts on a token about to die. */
 const REFRESH_SKEW_MS = 60_000;
 
+/** One CRM round trip. Declared here, not in core, because `ghl` may not import `core`. */
+export interface CrmCall {
+  method: string;
+  path: string;
+  status: number;
+  latencyMs: number;
+}
+
 export interface GhlClientOptions {
   apiDomain: string;
   clientId: string;
   clientSecret: string;
   tokens: TokenStore;
+  /**
+   * Called once per request, success or failure. A plain callback rather than a tracer because
+   * this package may not import `core`; the edge decides what a CRM round trip means.
+   */
+  onCall?: (call: CrmCall) => void;
+}
+
+declare module "axios" {
+  interface InternalAxiosRequestConfig {
+    /** Stamped by the request interceptor so the response side can price the round trip. */
+    harnessStartedAt?: number;
+  }
 }
 
 /**
@@ -54,15 +74,32 @@ export class GhlClient {
     instance.interceptors.request.use(async (config) => {
       const installation = await this.#fresh(resourceId);
       config.headers.set("Authorization", `Bearer ${installation.access_token}`);
+      // After the token wait on purpose: a refresh is our latency, not the CRM's.
+      config.harnessStartedAt = Date.now();
       return config;
     });
 
+    const report = (config: InternalAxiosRequestConfig | undefined, status: number): void => {
+      if (!config?.harnessStartedAt) return;
+      this.#opts.onCall?.({
+        method: config.method?.toUpperCase() ?? "GET",
+        path: config.url ?? "",
+        status,
+        latencyMs: Date.now() - config.harnessStartedAt,
+      });
+    };
+
     instance.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        report(response.config, response.status);
+        return response;
+      },
       async (error: unknown) => {
         if (!isAxiosError<unknown>(error) || !error.response) throw error;
         const { status, data } = error.response;
         const original = error.config;
+        // Reported before the 401 retry so both attempts show, rather than one that looks slow.
+        report(original, status);
 
         if (status === 401 && original && original.headers["X-Harness-Retried"] !== "1") {
           const installation = await this.#refresh(resourceId);

@@ -295,6 +295,24 @@ Kept in memory. A restart drops pending batches and in-flight turns, and two ins
 debounce their own share of a burst. Both acceptable for a single-instance deployment, neither
 hidden by the interface.
 
+### Two clocks, and only one of them is the SLO {#slo-clock}
+
+`turn_end.totalLatencyMs` measures the loop: gate, retrieval, model, skills. It starts when
+`runTurn` is entered and is the number a provider comparison wants, because it contains nothing but
+our own work and the vendor's.
+
+The target is written about something larger — webhook received to reply accepted by the CRM — so
+`turn_sent` carries that separately, along with how much of it the CRM itself took. Reporting only
+the loop would flatter the harness by leaving out the queue, the history fetch and the send; those
+are real time a customer waits. Debounce is deliberately inside the number: the clock starts at the
+earliest message of a batch, which is when the customer stopped being answered.
+
+`crm_call` is what makes the difference legible. It is emitted from an axios interceptor in
+`packages/ghl`, which may not import `core`, so the client takes a plain `onCall` callback and the
+edge turns it into a trace event. The active turn is found through an `AsyncLocalStorage` rather
+than threaded through every endpoint signature: one shared client serves every turn, and a
+module-level variable would bill a round trip to whichever turn started most recently.
+
 ### The chat surface is reached directly, not proxied {#cors}
 
 In development the Vite proxy puts the chat app and the server on one origin, so `/api` is a

@@ -115,6 +115,21 @@ export interface TurnEndEvent extends BaseEvent {
   totalLatencyMs: number;
 }
 
+/**
+ * The SLO clock: webhook received to reply accepted by the CRM. `turn_end` measures the loop only,
+ * which is the smaller number and not the one the target is written about.
+ */
+export interface TurnSentEvent extends BaseEvent {
+  type: "turn_sent";
+  /** Webhook arrival to the send returning. Debounce included; it is real customer-visible time. */
+  webhookToSendMs: number;
+  /** How much of that was the CRM answering, so a slow vendor is not read as a slow harness. */
+  crmMs: number;
+  /** Which vendor answered, so actuals can be reported per provider without a join. */
+  provider: string | null;
+  retrieved: boolean;
+}
+
 export interface ErrorEvent extends BaseEvent {
   type: "error";
   stage: string;
@@ -134,6 +149,7 @@ export type TraceEvent =
   | CrmCallEvent
   | HandoverEvent
   | TurnEndEvent
+  | TurnSentEvent
   | ErrorEvent;
 
 export type TraceEventType = TraceEvent["type"];
