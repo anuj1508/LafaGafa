@@ -80,6 +80,8 @@ reporting success. A green per-package lint is worse than no lint, because it lo
 - New dependency? Add a one-line comment in the PR description saying what it replaces. Reject
   anything that wraps the loop, the providers, the tracing, or the evals.
 - Read the types before calling anything. Never invent an API surface.
+- **Ask before spending money.** Eval runs, `pnpm bench` and `pnpm kb:ingest` call paid APIs.
+  Confirm before running them, so nobody learns what a run cost from a billing page.
 
 ## Output contract
 
@@ -90,6 +92,12 @@ These are not style preferences; they are what makes your output reviewable.
 - Comments explain **why**, never **what** and never **what changed**. `// added to fix the 401`
   is archaeology — git has it. `// single-flight: a burst of webhooks would otherwise fire N
 refreshes and GHL invalidates all but one` is a reason.
+- **Two lines is the ceiling for a comment.** Reasoning that needs more goes in
+  `docs/architecture.md` under an anchor, and the comment points at it: `See #connection-pool`.
+  Anchors there are load-bearing, so deleting one breaks the comments that reference it.
+- **Never document what you have not verified.** Read the file, run the command, check the path
+  resolves. A described mechanism that does not exist is worse than no documentation, because it
+  costs a reviewer the time to discover it is fiction.
 - No emoji anywhere in source, comments, or commit messages.
 - **Every commit you author ends with a `Co-Authored-By:` trailer naming the agent that wrote it**
   — whichever tool that is, with its own no-reply address. Attribution stays accurate when the
@@ -102,7 +110,36 @@ refreshes and GHL invalidates all but one` is a reason.
 - If a requirement is ambiguous, implement the reading you can defend and name the assumption in
   one line. Do not stop and ask for anything you could have decided.
 
+## Changing these rules
+
+You may edit this file, and you may add playbooks under `agent-skills/`. Three things follow.
+
+**Regenerate.** After editing this file, run `pnpm sync:agent`. `pnpm verify` runs
+`sync:agent --check`, so a stale `CLAUDE.md` fails the build. Never hand-edit `CLAUDE.md`: it is
+overwritten on the next sync, and to change what it says beyond the import you edit
+`CLAUDE_MD_CONTENT` in `scripts/sync-agent.ts`. Adding a playbook needs no registration:
+`.claude/skills` symlinks the whole `agent-skills/` directory, so a new subdirectory with `name` and
+`description` frontmatter is discovered on its own.
+
+**Know which of the three you are editing.** They are all markdown and two are called SKILL.md:
+
+| File                      | Governs                                  | Needs eval cases |
+| ------------------------- | ---------------------------------------- | ---------------- |
+| `AGENTS.md`               | how you write code                       | no               |
+| `agent-skills/*/SKILL.md` | how you perform one coding task          | no               |
+| `skills/*/SKILL.md`       | what the shipped agent says to customers | **yes**          |
+
+The third is production behaviour. It is injected into the system prompt at runtime, so a wording
+change there is a behaviour change and belongs with fixtures that prove it.
+
+**Never relax a rule in the same commit as the work it would have failed.** Propose the change on
+its own, with the case that motivated it named, and let a human take it. A gate loosened in the
+same breath as the run it blocked is indistinguishable from a gate that was never there, and the
+diff cannot tell the reviewer which one happened. If a rule is genuinely wrong, say so in one line
+at the end of your report and leave it standing.
+
 ## Precedence
 
 On any conflict: this file and `agent-skills/` win over community or third-party skills, which win
-over tool defaults. Package-local `AGENTS.md` files override this one within their directory.
+over tool defaults. Package-local `AGENTS.md` files override this one within their directory. There
+are two, `packages/core/AGENTS.md` and `evals/AGENTS.md`.

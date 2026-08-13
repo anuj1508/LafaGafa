@@ -60,6 +60,7 @@ The order matters. Each step produces something the next one needs, and two of t
 ```bash
 git clone <repo-url> && cd Itachi-AI
 pnpm install
+pnpm build
 ```
 
 ### 2. Start the tunnel
@@ -151,7 +152,25 @@ pnpm db:migrate
 Eight tables, seventeen indexes and the pgvector extension, from the single migration in
 `packages/db/migrations/`. Idempotent, so running it against an up-to-date database does nothing.
 
-### 7. Start the server and install the app
+### 7. Index the knowledge base
+
+```bash
+pnpm kb:ingest
+```
+
+Reads every markdown file under `kb/`, chunks it, embeds it and replaces what is indexed. 19
+documents become 80 chunks.
+
+**Requires `locationId` from step 5**, plus `OPENAI_API_KEY` and the migrated database. It does not
+require the app install, because it makes no CRM call: `locationId` is used only to label the chunks
+it writes, never to call HighLevel. Re-running it later is safe, since the corpus for that location
+is replaced wholesale.
+
+A wrong `locationId` here fails silently. The chunks get filed under a location nothing queries, and
+the agent then refuses every factual question, which is indistinguishable from an empty knowledge
+base.
+
+### 8. Start the server and install the app
 
 ```bash
 pnpm dev
@@ -160,19 +179,6 @@ pnpm dev
 Then install the app onto your sandbox sub-account from the marketplace. The OAuth callback writes
 the refresh token into `installations`, and **nothing works until this has happened**. There is no
 way to skip it: every CRM call needs that token.
-
-### 8. Index the knowledge base
-
-```bash
-pnpm kb:ingest
-```
-
-Reads every markdown file under `kb/`, chunks it, embeds it and replaces what is indexed. 19
-documents become 80 chunks. This calls the OpenAI embeddings API and fails fast without
-`OPENAI_API_KEY`, so step 4 has to be done first.
-
-Until this runs, the agent answers every factual question with a refusal, which is correct behaviour
-against an empty knowledge base and looks exactly like a bug.
 
 ### 9. Run the surfaces
 
@@ -226,6 +232,7 @@ token counts, and latency per step.
 ## Commands
 
 ```
+pnpm build                  # required before the first run, and after changing a package
 pnpm dev                    # the server
 pnpm dev:cli                # turns against the harness with no CRM, webhook or tunnel
 pnpm verify                 # build, typecheck, test, lint, knip, format
@@ -241,6 +248,104 @@ pnpm trace                  # recent turns as a waterfall
 pnpm db:migrate             # apply the schema
 pnpm db:reset               # empty the tables, keep the schema and OAuth token
 pnpm kb:ingest              # re-index the knowledge base
+```
+
+## Working on this with a coding agent
+
+`AGENTS.md` is the single source of truth and the only file a human edits. Everything tool-specific
+is generated from it by `pnpm sync:agent`, so there is never a second copy of a rule to drift.
+
+This section is setup: pointing your tool at the rules and checking it worked. The rules themselves,
+and what to do when you change one, are in [AGENTS.md](AGENTS.md).
+
+### What each tool reads
+
+| Tool                          | Reads                                        | Setup after cloning      |
+| ----------------------------- | -------------------------------------------- | ------------------------ |
+| Cursor, Codex CLI, Gemini CLI | `AGENTS.md` directly                         | none                     |
+| Claude Code                   | `CLAUDE.md`, plus skills in `.claude/skills` | none, both are committed |
+| Anything else                 | point it at `AGENTS.md`                      | none                     |
+
+A plain `git clone` is enough. `CLAUDE.md`, `AGENTS.md`, `agent-skills/` and the `.claude/skills`
+symlink are all tracked.
+
+### Check the agent actually has the context
+
+Ask it something only the rules answer, such as _what is the line limit for a file in this repo, and
+where does lint have to run from?_ A tool with the context says roughly 300 lines, and that lint runs
+once from the repo root because the boundary patterns are relative to the working directory. A tool
+without it will guess.
+
+For Claude Code specifically, five skills should appear in its available-skills list:
+`new-agent-skill`, `new-coding-skill`, `new-eval-case`, `trace-event` and `ghl-api-endpoint`. If none
+appear, see the symlink note below.
+
+### The playbooks
+
+`agent-skills/` holds playbooks for the coding agent. Each names every file a particular kind of
+change has to touch, which is how a change comes out complete rather than plausible.
+
+**They are not instructions for you to follow by hand.** They are what you point the agent at. The
+normal way to extend this repo is to ask, then review the diff.
+
+| Playbook           | Use it when                                       |
+| ------------------ | ------------------------------------------------- |
+| `new-agent-skill`  | the shipped agent needs a capability it can call  |
+| `new-eval-case`    | adding coverage, and after every bugfix           |
+| `trace-event`      | a new decision a reviewer would need to see       |
+| `ghl-api-endpoint` | the CRM client cannot reach an endpoint you need  |
+| `new-coding-skill` | a multi-file change keeps being done incompletely |
+
+Naming the playbook in the prompt is what makes it reliable. Left to match on wording alone, whether
+it gets picked up is a coin flip.
+
+### Adding a skill by asking
+
+The agent ships with three: `update_contact`, `book_appointment` and `human_handover`. Adding a
+fourth is a prompt, in Claude Code, Cursor, or anything else pointed at `AGENTS.md`.
+
+> Use the **new-agent-skill** playbook to add a `cancel_appointment` skill. The customer names an
+> appointment, we confirm which one before touching it, and cancelling inside 24 hours has to
+> mention the charge. Add the negative cases too: it must not fire when they are only asking what
+> they have booked.
+
+The playbook lists every file it should touch and what each one owes. Read it before reviewing the
+diff, and check the list off. Anything under `packages/core` is a red flag: the extensibility claim
+is that a skill does not need it.
+
+The same applies to the coding agent's own playbooks:
+
+> Use the **new-coding-skill** playbook to write a playbook for adding a settings field. It keeps
+> getting added to the zod schema without a default, and without the example file being updated.
+
+And to everything else the playbooks cover:
+
+> Use **trace-event** to record when the retrieval gate times out and fails open. Right now that
+> looks identical to a gate that decided to retrieve.
+
+> Use **new-eval-case**. It offered a Saturday afternoon slot, which we do not do. Add a case that
+> catches it, and check whether the expectation or the knowledge base is what is actually wrong.
+
+### Adding a skill by hand
+
+Read the playbook and follow it. `agent-skills/new-agent-skill/SKILL.md` names every file with its
+contract; `agent-skills/new-coding-skill/SKILL.md` covers the frontmatter and the rule-versus-
+playbook test. Nothing about the repo requires an agent, and `pnpm verify` is the same gate either
+way.
+
+### Adding support for another tool
+
+Add a target in `scripts/sync-agent.ts` alongside the existing two. The rule is that the new file is
+generated from `AGENTS.md`, never written by hand, so adding a tool cannot fork the rules.
+
+### If Claude Code shows no skills
+
+`.claude/skills` is a symlink to `agent-skills/`. Git clones it correctly on macOS and Linux. On
+Windows without developer mode, or with `core.symlinks=false`, it arrives as a plain text file
+containing the path and nothing loads. Fix it with:
+
+```bash
+pnpm sync:agent
 ```
 
 ## Functional versus mocked
