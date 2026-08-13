@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import DataBadge from "./DataBadge.vue";
 import { api, type ModelConfig } from "../api";
 
 /**
@@ -33,7 +34,7 @@ onMounted(load);
 
 <template>
   <div v-if="config">
-    <h2 class="section">Chat</h2>
+    <h2 class="section">Chat <DataBadge kind="live" /></h2>
     <p class="dim spaced">
       The agent itself. Tried in order — the first entry is primary, the rest are the failover
       chain. The same messages are replayed against the next one, so a switch is invisible to the

@@ -2,6 +2,7 @@
 import { onMounted, ref, watch } from "vue";
 import { api } from "../api";
 import { LATENCY } from "../measured";
+import DataBadge from "./DataBadge.vue";
 
 /**
  * Latency against the SLO, and what the agent is running under.
@@ -68,6 +69,7 @@ const within = (value: number, slo: number) => value <= slo;
       <section class="panel">
         <header class="panel-head">
           <h2>By provider</h2>
+          <DataBadge kind="measured" />
           <span class="dim small">{{ LATENCY.note }}</span>
         </header>
         <table class="data">
@@ -104,6 +106,7 @@ const within = (value: number, slo: number) => value <= slo;
     <section v-if="tab === 'runtime'" class="panel">
       <header class="panel-head">
         <h2>Runtime settings</h2>
+        <DataBadge kind="live" />
         <span class="dim small">secrets are environment variables and never reach here</span>
       </header>
       <p v-if="failed" class="empty">Server offline on :3000.</p>

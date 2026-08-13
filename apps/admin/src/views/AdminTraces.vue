@@ -4,6 +4,7 @@ import type { TraceEventRow } from "../api";
 import { scope } from "../scope";
 import { failedNodes, nodesAt, nodesUpTo, STAGE } from "../stage";
 import { loadTurns, openTurn, store } from "../store";
+import DataBadge from "./DataBadge.vue";
 import PipelineDiagram from "./PipelineDiagram.vue";
 import TurnTransparency from "./TurnTransparency.vue";
 
@@ -178,6 +179,7 @@ function phase(type: string): string {
       <aside class="pane list">
         <header>
           <h2>{{ props.section === "errors" ? "Errors" : "Turns" }}</h2>
+          <DataBadge kind="live" />
           <span class="dim small">{{ shown.length }}</span>
         </header>
         <p v-if="shown.length === 0" class="empty">

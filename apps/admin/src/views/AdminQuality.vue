@@ -2,6 +2,7 @@
 import { computed, ref } from "vue";
 import { AGENTS, CONFIG_CHANGES, gapsFor, npsFor, SUB_ACCOUNTS } from "../mock/tenancy";
 import { BEHAVIOUR_EVAL, GATE_EVAL, JUDGE_EVAL } from "../measured";
+import DataBadge from "./DataBadge.vue";
 import { scope } from "../scope";
 
 /**
@@ -82,6 +83,7 @@ const pct = (value: number) => `${(value * 100).toFixed(1)}%`;
       <section class="panel">
         <header class="panel-head">
           <h2>Confusion matrix</h2>
+          <DataBadge kind="measured" />
           <span class="dim small">precision alone hides which way it errs</span>
         </header>
         <div class="matrix">
@@ -127,7 +129,10 @@ const pct = (value: number) => `${(value * 100).toFixed(1)}%`;
       </section>
 
       <section class="panel">
-        <header class="panel-head"><h2>By behaviour</h2></header>
+        <header class="panel-head">
+          <h2>By behaviour</h2>
+          <DataBadge kind="measured" />
+        </header>
         <table class="data">
           <tbody>
             <tr v-for="row in BEHAVIOUR_EVAL.byBehaviour" :key="row.name">
@@ -151,6 +156,7 @@ const pct = (value: number) => `${(value * 100).toFixed(1)}%`;
     <section v-if="tab === 'gaps'" class="panel suggest">
       <header class="panel-head">
         <h2>Questions nothing answered</h2>
+        <DataBadge kind="sample" />
         <span class="dim small">across every customer in scope</span>
       </header>
       <table class="data">
@@ -184,6 +190,7 @@ const pct = (value: number) => `${(value * 100).toFixed(1)}%`;
       <section class="panel">
         <header class="panel-head">
           <h2>Satisfaction, worst first</h2>
+          <DataBadge kind="sample" />
           <span class="dim small">where to look before a customer tells you</span>
         </header>
         <table class="data">
@@ -206,6 +213,7 @@ const pct = (value: number) => `${(value * 100).toFixed(1)}%`;
       <section class="panel">
         <header class="panel-head">
           <h2>Recent configuration changes</h2>
+          <DataBadge kind="sample" />
           <span class="dim small">read alongside the scores above</span>
         </header>
         <table class="data">

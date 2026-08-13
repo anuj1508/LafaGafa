@@ -10,6 +10,7 @@ import {
   subAccountsFor,
 } from "../mock/tenancy";
 import { scope } from "../scope";
+import DataBadge from "./DataBadge.vue";
 
 /** Who is on the platform. Support opens this to find a customer; sales to see the shape of one. */
 
@@ -169,6 +170,7 @@ const nameOf = (id: string) => SUB_ACCOUNTS.find((a) => a.id === id)?.business ?
     <section v-if="tab === 'changes'" class="panel">
       <header class="panel-head">
         <h2>Configuration changes</h2>
+        <DataBadge kind="sample" />
         <span class="dim small">the answer to "it started doing that on Tuesday"</span>
       </header>
       <table class="data">

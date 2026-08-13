@@ -238,6 +238,26 @@
   color: var(--ad-dim);
 }
 
+/* style.css tints these cream for the light product, which is unreadable on this canvas. */
+.cn-canvas .panel.suggest {
+  border-color: #d2992255;
+}
+
+.cn-canvas .panel.suggest .panel-head {
+  background: #d299221a;
+}
+
+/* Provenance, not status: measured is real but not recomputed, sample is invented. */
+.cn-canvas .chip.measured {
+  background: #7c5cff2e;
+  color: var(--ad-accent);
+}
+
+.cn-canvas .chip.sample {
+  background: #d299222e;
+  color: var(--ad-warn);
+}
+
 .cn-canvas .nudge {
   border-color: var(--ad-line);
   background: var(--ad-raise);
