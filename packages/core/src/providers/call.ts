@@ -73,9 +73,14 @@ export async function callModel(
             : {}),
         },
         messages: input.messages,
-        // Reasoning off for gate and judge: neither improves with it. See #thinking.
-        ...(binding.provider === "google" && input.role !== "chat"
-          ? { providerOptions: { google: { thinkingConfig: { thinkingLevel: "low" } } } }
+        // Reasoning down to the floor on every role: none of them is a reasoning problem, and it
+        // was a third of turn latency. See #thinking.
+        ...(binding.provider === "google"
+          ? {
+              providerOptions: {
+                google: { thinkingConfig: { thinkingLevel: "minimal", includeThoughts: false } },
+              },
+            }
           : {}),
         temperature: binding.temperature,
         maxOutputTokens: binding.maxOutputTokens,

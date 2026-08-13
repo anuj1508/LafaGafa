@@ -197,14 +197,21 @@ The last two arrive as 400 and 404 — statuses that are permanent for _that ent
 the chain, because the next entry is a different vendor with a different model. Not worth failing
 over: a malformed request or a bad key, which every provider rejects identically.
 
-### Reasoning off for internal roles {#thinking}
+### Reasoning at the floor, on every role {#thinking}
 
 Gemini 3.x thinks before it writes and spends the output budget doing it. At 60 tokens the gate
 truncated mid-JSON, every call failed open, and the result read as a model that retrieves on
 everything rather than one that never answered. The gate decides a boolean and the judge scores a
 rubric; neither improves with deliberation and both pay for it on every turn.
 
-Note the field is `thinkingLevel`, not `thinkingBudget` — 3.x rejects the older one outright.
+Chat was left thinking until latency was measured properly, and then it stopped being defensible: a
+gate call at `low` cost 1291 ms of a 2964 ms turn — longer than the chat call it was gating. None of
+the three roles is a reasoning problem. A front-desk reply that needs deliberation is a reply that
+needed a person.
+
+Note the field is `thinkingLevel`, not `thinkingBudget` — 3.x rejects the older one outright, and
+`minimal` is the lowest the 4.x SDK exposes. It is a constant rather than a setting because there is
+no operator answer to "how much should it think" that is not just "as little as it can".
 
 ---
 

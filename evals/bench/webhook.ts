@@ -27,9 +27,35 @@ const poolSize = Math.max(1, Number(flag("pool") ?? 15));
 const limit = flag("limit") === undefined ? undefined : Number(flag("limit"));
 /** The first turns of a run pay for a cold container and a cold pool. They are not the SLO. */
 const warmup = Math.max(0, Number(flag("warmup") ?? 3));
+/** Breathing room between turns. The CRM rate-limits well below what this loop could drive. */
+const gapMs = Math.max(0, Number(flag("gap") ?? 2000));
 const dryRun = args.includes("--dry-run");
 
-const cases = (await loadCases("evals/fixtures/behaviour.yaml")).slice(0, limit);
+const corpus = await loadCases("evals/fixtures/behaviour.yaml");
+
+/**
+ * A proportional slice of the corpus, keeping every behaviour represented.
+ *
+ * Deterministic — the first N of each group in fixture order — so the run reproduces rather than
+ * sampling a different workload each time. The same cases run on every provider, because comparing
+ * vendors across different inputs compares the inputs.
+ */
+function stratify(all: typeof corpus, size: number): typeof corpus {
+  const groups = new Map<string, typeof corpus>();
+  for (const testCase of all) {
+    groups.set(testCase.behavior, [...(groups.get(testCase.behavior) ?? []), testCase]);
+  }
+  const picked = [...groups]
+    .sort()
+    .flatMap(([, group]) =>
+      group.slice(0, Math.max(1, Math.round((group.length / all.length) * size))),
+    );
+  // Fixture order, not group order: a run that does all the RAG turns last would drift with it.
+  return all.filter((testCase) => picked.includes(testCase));
+}
+
+const sample = flag("sample") === undefined ? undefined : Number(flag("sample"));
+const cases = sample === undefined ? corpus.slice(0, limit) : stratify(corpus, sample);
 
 const post = async (path: string, body?: unknown): Promise<unknown> => {
   const response = await fetch(`${target}${path}`, {
@@ -89,6 +115,7 @@ for (const provider of providers) {
   }
 
   let index = 0;
+  const problems: string[] = [];
   for (const testCase of cases) {
     const session = sessions[index % sessions.length];
     index += 1;
@@ -98,12 +125,22 @@ for (const provider of providers) {
     try {
       await post("/api/chat/message", { sessionId: session.sessionId, text: testCase.input });
       const ms = await waitForTurn(session.conversationId, since);
+      if (ms === null) problems.push(`${testCase.id}: no turn_sent within 90s`);
       process.stdout.write(ms === null ? "?" : index <= warmup ? "w" : ".");
-    } catch {
+    } catch (error) {
+      problems.push(`${testCase.id}: ${error instanceof Error ? error.message : String(error)}`);
       process.stdout.write("E");
     }
+    // Paced, not hammered: the CRM rate-limits, and a 429 would be recorded as harness latency.
+    await new Promise((resolve) => globalThis.setTimeout(resolve, gapMs));
   }
-  console.log(`\n${String(cases.length)} turns driven. Query the traces for the numbers.`);
+  console.log(
+    `\n${String(cases.length - problems.length)}/${String(cases.length)} turns measured.`,
+  );
+  if (problems.length > 0) {
+    console.log(`\nNot measured — every one named:`);
+    for (const problem of problems) console.log(`  ${problem}`);
+  }
 }
 
 await pool.end();
