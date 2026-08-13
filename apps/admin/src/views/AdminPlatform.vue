@@ -73,7 +73,7 @@ const primary = LATENCY.primary;
       <section class="panel">
         <header class="panel-head">
           <h2>By provider</h2>
-          <DataBadge kind="measured" />
+          <DataBadge kind="measured" on="13 Aug" />
           <span class="dim small">{{ LATENCY.note }}</span>
         </header>
         <table class="data">
@@ -115,7 +115,7 @@ const primary = LATENCY.primary;
       <section class="panel">
         <header class="panel-head">
           <h2>Where a turn's time goes</h2>
-          <DataBadge kind="measured" />
+          <DataBadge kind="measured" on="13 Aug" />
           <span class="dim small">p50 per component</span>
         </header>
         <table class="data">
@@ -150,7 +150,7 @@ const primary = LATENCY.primary;
       <section class="panel">
         <header class="panel-head">
           <h2>CRM endpoints</h2>
-          <DataBadge kind="measured" />
+          <DataBadge kind="measured" on="13 Aug" />
           <span class="dim small">every round trip across the three runs</span>
         </header>
         <table class="data">

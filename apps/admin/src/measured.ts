@@ -1,5 +1,5 @@
 /**
- * Numbers from the run of 10 August 2026, transcribed from `evals/.results` and reported in full
+ * Numbers from the run of 10 August 2026 UTC, transcribed from `evals/.results` and reported in full
  * in `docs/eval-results.md`. Anthropic's row, because it is the one both judges graded.
  *
  * Transcribed rather than served because these are the cross-provider figures the writeup argues
@@ -46,7 +46,7 @@ export const JUDGE_EVAL = {
 };
 
 /**
- * Webhook-to-send, measured 13 August 2026 against the deployed harness: 93 real turns, 31
+ * Webhook-to-send, measured 13 August 2026 UTC against the deployed harness: 93 real turns, 31
  * stratified cases per provider, one conversation each. Transcribed from `turn_sent`.
  *
  * Not a live query on purpose. These are the figures `docs/eval-results.md` argues from, and a

@@ -1,9 +1,11 @@
 # Eval results
 
-Gate, behaviour and judge measured 11 August 2026 against a database cleared immediately beforehand:
-`pnpm gate --all-providers --keep-going`. Latency measured separately on 13 August against the
-deployed harness, because webhook-to-send cannot be timed without a real CRM at the other end:
-`pnpm bench:webhook`. Each section names its own run.
+Two runs, dated in UTC to match the `ranAt` stamps in `evals/.results`.
+
+Gate, behaviour and judge: **10 August 2026, 20:53 UTC**, against a database cleared immediately
+beforehand — `pnpm gate --all-providers --keep-going`. Latency: **13 August 2026, 10:50 UTC**,
+against the deployed harness, because webhook-to-send cannot be timed without a real CRM at the
+other end — `pnpm bench:webhook`. Each section names its own run.
 
 The run finished **red**: every stage ran, and two did not clear their floors. Both are the judge,
 and both are the same strict rule rather than a mean below target — see "Why the run is red".
@@ -109,8 +111,9 @@ reply to grade.
 
 ## Latency — webhook to send, 93 turns
 
-Measured 13 August 2026 against the deployed harness on Render, database in `us-east-2`. Reproduce
-with `pnpm bench:webhook --target <host> --sample 33 --warmup 3 --gap 750`, one provider at a time.
+Measured 13 August 2026 from 10:50 UTC against the deployed harness on Render, database in
+`us-east-2`. Reproduce with `pnpm bench:webhook --target <host> --sample 33 --warmup 3 --gap 750`,
+one provider at a time.
 
 The target is **p50 ≤ 3s / p95 ≤ 6s, webhook to send, non-RAG turns, per provider**. An earlier
 version of this document reported `pnpm bench`, which times the loop against a mock CRM and reported

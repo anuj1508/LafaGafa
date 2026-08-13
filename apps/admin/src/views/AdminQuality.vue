@@ -83,7 +83,7 @@ const pct = (value: number) => `${(value * 100).toFixed(1)}%`;
       <section class="panel">
         <header class="panel-head">
           <h2>Confusion matrix</h2>
-          <DataBadge kind="measured" />
+          <DataBadge kind="measured" on="10 Aug" />
           <span class="dim small">precision alone hides which way it errs</span>
         </header>
         <div class="matrix">
@@ -131,7 +131,7 @@ const pct = (value: number) => `${(value * 100).toFixed(1)}%`;
       <section class="panel">
         <header class="panel-head">
           <h2>By behaviour</h2>
-          <DataBadge kind="measured" />
+          <DataBadge kind="measured" on="10 Aug" />
         </header>
         <table class="data">
           <tbody>

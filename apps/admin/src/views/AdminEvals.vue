@@ -54,7 +54,7 @@ const pct = (value: number) => `${(value * 100).toFixed(1)}%`;
     </p>
 
     <template v-if="gate">
-      <h2 class="section">Retrieval gate <DataBadge kind="measured" /></h2>
+      <h2 class="section">Retrieval gate <DataBadge kind="measured" on="10 Aug" /></h2>
       <p class="dim spaced">
         The explicit decision the whole design rests on. Recall matters more than precision: a false
         skip is a wrong answer, a false retrieve is only latency.
@@ -126,7 +126,7 @@ const pct = (value: number) => `${(value * 100).toFixed(1)}%`;
     </template>
 
     <template v-if="cases.length">
-      <h2 class="section">Behaviour <DataBadge kind="measured" /></h2>
+      <h2 class="section">Behaviour <DataBadge kind="measured" on="10 Aug" /></h2>
       <p class="dim spaced">
         {{ cases.filter((entry) => entry.passed).length }} of {{ cases.length }} through the real
         loop. Every row opens the turn it produced.
