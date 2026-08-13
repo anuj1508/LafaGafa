@@ -19,9 +19,6 @@ export type UpdateContactInput = z.infer<typeof inputSchema>;
 /** Standard GHL fields; anything else in the allowlist is treated as a custom field. */
 const STANDARD_FIELDS = new Set(["firstName", "lastName", "email", "phone"]);
 
-/** The fields GHL deduplicates contacts on. Writing one can merge this contact into another. */
-const DEDUPING_FIELDS = new Set(["email", "phone"]);
-
 /**
  * Writes a detail the customer volunteered. The interesting behaviour is what it refuses:
  * unallowed fields, malformed values, and unconfirmed identity. See #guards.
@@ -80,36 +77,8 @@ export function createUpdateContactSkill(deps: GhlSkillDeps): Skill<UpdateContac
 
       const patch = { [input.field]: input.value };
 
-      // Writing an email or phone can fold this contact into an existing one with the same
-      // value, destroying the id we hold. Upsert is the only call that reports which record
-      // survived, so the rest of the turn keeps talking to a contact that still exists.
-      if (DEDUPING_FIELDS.has(input.field)) {
-        const { contact } = await deps
-          .contacts(ctx.locationId)
-          .upsert({ ...patch, [input.field]: input.value });
-
-        if (contact.id !== ctx.contactId) {
-          ctx.tracer.emit({
-            type: "crm_call",
-            method: "MERGE",
-            path: `/contacts/${ctx.contactId} -> /contacts/${contact.id}`,
-            status: 200,
-            latencyMs: 0,
-          });
-          return {
-            status: "ok",
-            data: { field: input.field, value: input.value, mergedIntoContactId: contact.id },
-            summaryForModel: `Saved ${input.field} as "${input.value}". This customer already had a record here and the two have been merged.`,
-          };
-        }
-
-        return {
-          status: "ok",
-          data: { field: input.field, value: input.value },
-          summaryForModel: `Saved ${input.field} as "${input.value}" on the contact record.`,
-        };
-      }
-
+      // Every field is written straight to the contact we were given, email and phone included.
+      // Merge handling is deliberately absent for now: see docs/architecture.md#contact-merge.
       await deps.contacts(ctx.locationId).update(ctx.contactId, patch);
 
       return {

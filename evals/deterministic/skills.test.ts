@@ -162,9 +162,9 @@ describe("update_contact", () => {
     expect(ghl.calls.updates).toHaveLength(0);
   });
 
-  it("reports the surviving contact when the CRM merges this one away", async () => {
-    // GHL deduplicates on email: writing one that already exists destroys the id we hold, and
-    // every later call for it fails unless the turn learns which record won.
+  it("writes an identity field to the contact it was given, without merge handling", async () => {
+    // GHL deduplicates on email and can fold this contact into another. Following that merge is
+    // deferred, so the write is a plain update. See docs/architecture.md#contact-merge.
     ghl.setContact({ tags: ["anonymous-visitor"] });
     ghl.setMergeTarget("con_existing");
 
@@ -174,10 +174,11 @@ describe("update_contact", () => {
       confirmed: true,
     });
 
-    expect(result).toMatchObject({
-      status: "ok",
-      data: { mergedIntoContactId: "con_existing" },
-    });
+    expect(result.status).toBe("ok");
+    expect(result).not.toMatchObject({ data: { mergedIntoContactId: "con_existing" } });
+    expect(ghl.calls.updates).toContainEqual(
+      expect.objectContaining({ patch: { email: "priya@example.com" } }),
+    );
   });
 
   it("does NOT overwrite a value already on the record when the operator forbids it", async () => {

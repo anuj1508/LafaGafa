@@ -1,7 +1,9 @@
 # Eval results
 
-Measured 11 August 2026, against a database cleared immediately beforehand. Reproduce with
-`pnpm gate --all-providers --keep-going`.
+Gate, behaviour and judge measured 11 August 2026 against a database cleared immediately beforehand:
+`pnpm gate --all-providers --keep-going`. Latency measured separately on 13 August against the
+deployed harness, because webhook-to-send cannot be timed without a real CRM at the other end:
+`pnpm bench:webhook`. Each section names its own run.
 
 The run finished **red**: every stage ran, and two did not clear their floors. Both are the judge,
 and both are the same strict rule rather than a mean below target — see "Why the run is red".
@@ -15,7 +17,7 @@ Each answers a question the others cannot.
 | **Gate**      | `pnpm eval:gate`      | Should this turn have searched the knowledge base?        | Precision and recall over 57 labelled turns |
 | **Behaviour** | `pnpm eval:behaviour` | Did the right skills fire, and the wrong ones stay quiet? | 0/1 facts read off the trace, 89 cases      |
 | **Judge**     | `pnpm eval:judge`     | Was the answer grounded, and did it read well?            | 1–5 against a rubric, 56 cases              |
-| **Latency**   | `pnpm bench`          | How long does a non-RAG turn take?                        | p50 and p95 per provider                    |
+| **Latency**   | `pnpm bench:webhook`  | How long does the customer wait, webhook to send?         | p50 and p95 per provider                    |
 
 **Gate** is separate from behaviour because retrieving is a decision, not an outcome. Recall carries
 a higher floor (95%) than precision (85%) on purpose: a turn that needed documents and skipped them
@@ -31,8 +33,10 @@ a suite of happy paths passes an agent that also books appointments nobody asked
 **Judge** covers what cannot be checked exactly — whether a refusal was graceful, whether every
 claim traces to a passage. No vendor grades its own replies.
 
-**Latency** measures the harness's own spans and deliberately excludes the tunnel and the CRM round
-trip. Those are deployment facts, and including them hides which span is actually slow.
+**Latency** measures what the customer waits: webhook received to reply accepted by the CRM, the
+debounce window and the send included. It itemises the components rather than reporting one number,
+because a total nobody can decompose invites the wrong fix. `pnpm bench` still times the loop alone
+against a mock CRM, which is the right tool for comparing models and the wrong one for the target.
 
 A fifth, `pnpm eval:review`, points the other way: it asks whether an _expectation_ is right, rather
 than whether the agent met it. It never fails the build. See "the fixtures were wrong" below.
@@ -103,26 +107,103 @@ the error at roughly a tenth of a point rather than leaving it unknown.
 OpenAI shows 55 cases rather than 56 because one behaviour case died on a rate limit, leaving no
 reply to grade.
 
-## Latency — non-RAG turns, 12 runs each
+## Latency — webhook to send, 93 turns
 
-Target p50 ≤ 3s, p95 ≤ 6s.
+Measured 13 August 2026 against the deployed harness on Render, database in `us-east-2`. Reproduce
+with `pnpm bench:webhook --target <host> --sample 33 --warmup 3 --gap 750`, one provider at a time.
 
-| Provider   | p50        | p95        | Verdict             |
-| ---------- | ---------- | ---------- | ------------------- |
-| Anthropic  | 1161 ms    | 2041 ms    | within              |
-| OpenAI     | 1436 ms    | 3257 ms    | within              |
-| **Google** | **766 ms** | **940 ms** | within, comfortably |
+The target is **p50 ≤ 3s / p95 ≤ 6s, webhook to send, non-RAG turns, per provider**. An earlier
+version of this document reported `pnpm bench`, which times the loop against a mock CRM and reported
+Anthropic at 1161 ms. That is a real number about a different thing: it excludes the debounce window,
+the history fetch and the send. Measured properly, the same build and the same model answer in
+3799 ms. Nothing regressed — the clock changed.
 
-The turn is one model call — Anthropic's `llm_call` is 1152 ms of its 1161. Nothing else is worth
-optimising on a non-RAG turn.
+31 stratified cases per provider, every behaviour represented, one fresh conversation per case so no
+turn inherits another's history. First three turns discarded as warmup.
 
-The previous run put Anthropic's p95 at 5999 ms against a 6000 ms budget, and this document said
-that was "one slow call away from breaching". At 2041 ms it now has real headroom. Two runs is not
-a distribution, so read this as the earlier figure having been a bad tail rather than as an
-improvement anyone engineered.
+| Provider   | turns | p50         | p95      | RAG p50 | RAG p95 | Verdict                |
+| ---------- | ----- | ----------- | -------- | ------- | ------- | ---------------------- |
+| **Google** | 14    | **2972 ms** | 3627 ms  | 2768 ms | 4070 ms | **within both**        |
+| Anthropic  | 14    | 3799 ms     | 4915 ms  | 3741 ms | 9598 ms | p50 over by 799 ms     |
+| OpenAI     | 15    | 4056 ms     | 17559 ms | 3597 ms | 8358 ms | p50 over; tail is real |
 
-**RAG turns are much slower and are not covered by this SLO.** A two-part question measured 9.4 s
-end to end, of which 6.2 s was retrieval — see "the database was never the cost".
+Google passes with 28 ms of margin. That is not headroom — one slow CRM call flips it.
+
+RAG turns are reported apart because the target does not govern them. They are not meaningfully
+slower: retrieval is not what costs the time here.
+
+### Where a turn's time goes
+
+`turn_sent` carries its own arithmetic, so a total that misses the target names the component
+responsible instead of inviting a guess. p50 per component:
+
+| Provider  | queued | loop        | CRM total | the send |
+| --------- | ------ | ----------- | --------- | -------- |
+| Google    | 106 ms | **1782 ms** | 1070 ms   | 603 ms   |
+| Anthropic | 106 ms | 2909 ms     | 1158 ms   | 620 ms   |
+| OpenAI    | 106 ms | 2875 ms     | 1176 ms   | 620 ms   |
+
+Queued is the debounce window — waiting, not working. CRM total overlaps the loop when a skill calls
+the CRM mid-turn, so the columns do not sum.
+
+**Every difference between providers is the loop.** Queue, CRM and send are identical to within
+20 ms, as they must be: the CRM does not know which model answered.
+
+Two things distort the comparison in the vendors' favour, and both are worth stating. The gate runs
+on `google/gemini-3.5-flash-lite` whatever answers the turn — promoting a provider reorders the chat
+chain only — so several hundred milliseconds are common to every row and the real spread between
+chat models is wider than the table shows. And the debounce window is 100 ms here rather than the
+1000 ms a deployment would sensibly run.
+
+### The CRM is the largest cost the harness controls
+
+| Endpoint                           | calls | p50        | p95    | worst        |
+| ---------------------------------- | ----- | ---------- | ------ | ------------ |
+| `POST /conversations/messages`     | 96    | **619 ms** | 913 ms | 1532 ms      |
+| `PUT /contacts/{id}`               | 44    | 168 ms     | 318 ms | 630 ms       |
+| `GET /calendars/`                  | 70    | 127 ms     | 468 ms | 748 ms       |
+| `GET /conversations/{id}/messages` | 93    | 123 ms     | 174 ms | 396 ms       |
+| `GET /calendars/{id}/free-slots`   | 35    | 119 ms     | 664 ms | **24157 ms** |
+| `GET /contacts/{id}`               | 124   | 77 ms      | 254 ms | 699 ms       |
+
+The reply POST is unavoidable, runs on every turn, and eats a fifth of Google's entire budget. It is
+the single biggest thing standing between this harness and a comfortable p50, and none of it is ours.
+
+### One exclusion, named
+
+One turn is left out of the percentiles: `GET /calendars/{id}/free-slots` returned 200 after
+**24157 ms**, and the turn ended at `stop=turn_budget` having taken 32873 ms. The rule is that a
+single CRM call past 5000 ms is the vendor stalling rather than the harness working; the threshold
+sits far above the 913 ms p95 of the busiest endpoint, so it catches stalls and nothing else. It
+fired once, on OpenAI. Google and Anthropic lost no turns.
+
+Nothing else is trimmed. OpenAI's remaining 17559 ms turn stays in, because it is not an anomaly.
+
+### OpenAI's tail is OpenAI
+
+That 17559 ms turn called `book_appointment` six times. Five were rejected `422` by the calendar
+endpoint before the sixth succeeded.
+
+| Provider  | free-slots calls | rejected 422 | tool calls | failed | iterations p50 / max |
+| --------- | ---------------- | ------------ | ---------- | ------ | -------------------- |
+| Google    | 7                | **0**        | 23         | 0      | 1 / 2                |
+| Anthropic | 8                | **0**        | 22         | 0      | 1 / 2                |
+| OpenAI    | 20               | **13**       | 41         | 13     | 1 / **6**            |
+
+`gpt-4o-mini` generates booking arguments the calendar rejects and then retries them. The other two
+vendors never do it once across the same 31 cases. This is a model quality difference surfacing as
+latency, and it is the most interesting result in the run: the p95 is not noise to be trimmed, it is
+the harness faithfully reporting a vendor that cannot call this tool reliably.
+
+It also names a gap in our own schema. A skill whose arguments a model can get wrong thirteen times
+is a skill that should be validating or normalising them before it reaches the CRM. That belongs in
+the deterministic suite as a case asserting bad slot arguments never reach `free-slots`.
+
+### What this says about the chain
+
+Google is the right primary, which is what the deployed settings already have. It is the only
+provider inside the target, it has the fastest loop by a second, and it is the only one that calls
+the booking skill correctly every time.
 
 # Why the run is red
 

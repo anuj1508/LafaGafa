@@ -302,6 +302,21 @@ Kept in memory. A restart drops pending batches and in-flight turns, and two ins
 debounce their own share of a burst. Both acceptable for a single-instance deployment, neither
 hidden by the interface.
 
+### Contact merging is the CRM's business, not ours {#contact-merge}
+
+GHL deduplicates contacts by email and phone. Writing either can fold the contact we are holding
+into an existing record and invalidate the id, which shows up one call later as
+`400 Contact not found`.
+
+`update_contact` used to route those two fields through `/contacts/upsert`, the only call that
+reports which record survived, and carried the surviving id through the rest of the turn. That is
+removed: every field is now a plain update against the contact the webhook named, and each chat
+session gets its own contact.
+
+The cost is stated rather than hidden. If the CRM merges anyway, the id goes stale mid-turn and the
+reply fails to send — the `stage: "send"` error is now traced rather than lost, so it is visible
+when it happens. Reinstating merge handling is deferred work, not a solved problem.
+
 ### Two clocks, and only one of them is the SLO {#slo-clock}
 
 `turn_end.totalLatencyMs` measures the loop: gate, retrieval, model, skills. It starts when

@@ -22,8 +22,6 @@ const flag = (name: string): string | undefined => {
 
 const target = (flag("target") ?? "http://localhost:3000").replace(/\/$/, "");
 const providers = (flag("provider") ?? "anthropic,openai,google").split(",");
-/** Conversations to spread the corpus over. Fewer means longer histories and slower later turns. */
-const poolSize = Math.max(1, Number(flag("pool") ?? 15));
 const limit = flag("limit") === undefined ? undefined : Number(flag("limit"));
 /** The first turns of a run pay for a cold container and a cold pool. They are not the SLO. */
 const warmup = Math.max(0, Number(flag("warmup") ?? 3));
@@ -71,7 +69,6 @@ console.log(
   `\ntarget     ${target}` +
     `\nproviders  ${providers.join(", ")}` +
     `\ncases      ${String(cases.length)} per provider, sequential` +
-    `\npool       ${String(poolSize)} conversations per provider` +
     `\nwarmup     ${String(warmup)} turns discarded` +
     `\ntotal      ${String(cases.length * providers.length)} real turns\n`,
 );
@@ -123,22 +120,19 @@ for (const provider of providers) {
   console.log(`\n${"━".repeat(70)}\n${provider}\n`);
   await post("/api/admin/model", { provider });
 
-  const sessions: Array<{ sessionId: string; conversationId: string }> = [];
-  for (let i = 0; i < poolSize; i += 1) {
-    sessions.push(
-      (await post("/api/chat/session")) as { sessionId: string; conversationId: string },
-    );
-  }
-
   let index = 0;
   const problems: string[] = [];
   for (const testCase of cases) {
-    const session = sessions[index % sessions.length];
     index += 1;
-    if (!session) continue;
 
     const since = new Date();
     try {
+      // A conversation per case, never a pool. A reused thread carries the previous case's history
+      // into the prompt, so the second turn on it is slower for a reason that is not the harness.
+      const session = (await post("/api/chat/session")) as {
+        sessionId: string;
+        conversationId: string;
+      };
       await post("/api/chat/message", { sessionId: session.sessionId, text: testCase.input });
       const ms = await waitForTurn(session.conversationId, since);
       if (ms === null) problems.push(`${testCase.id}: no turn_sent within 90s`);
