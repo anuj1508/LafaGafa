@@ -1,6 +1,9 @@
 node_modules
 dist
 coverage
+# Suite output, committed so a deployment can serve numbers it did not invent. Written by the
+# runners, never by hand.
+evals/.results
 .turbo
 pnpm-lock.yaml
 CLAUDE.md

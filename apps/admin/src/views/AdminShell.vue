@@ -51,7 +51,7 @@ const GROUPS = computed(() => [
   {
     name: "Platform",
     items: [
-      { id: "platform", label: "Latency and cost", value: "2998ms" },
+      { id: "platform", label: "Latency", value: "1161ms" },
       { id: "models", label: "Models", value: "" },
       { id: "runtime", label: "Runtime", value: "" },
     ],

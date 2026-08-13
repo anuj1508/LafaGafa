@@ -1,0 +1,29 @@
+{
+  "ranAt": "2026-08-10T20:53:39.079Z",
+  "provider": "anthropic",
+  "model": "claude-haiku-4-5-20251001",
+  "cases": 57,
+  "accuracy": 0.9649122807017544,
+  "precision": 0.9666666666666667,
+  "precisionFloor": 0.85,
+  "recall": 0.9666666666666667,
+  "recallFloor": 0.95,
+  "truePositive": 29,
+  "falsePositive": 1,
+  "trueNegative": 26,
+  "falseNegative": 1,
+  "falseSkips": [
+    {
+      "id": "amb-how-long",
+      "input": "how long does it take?",
+      "reason": "too vague"
+    }
+  ],
+  "falseRetrieves": [
+    {
+      "id": "confirm-email",
+      "input": "yes that's the right email",
+      "reason": "The operation was aborted due to timeout"
+    }
+  ]
+}

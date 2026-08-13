@@ -1,0 +1,23 @@
+{
+  "ranAt": "2026-08-10T20:53:41.920Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "cases": 57,
+  "accuracy": 0.9824561403508771,
+  "precision": 0.967741935483871,
+  "precisionFloor": 0.85,
+  "recall": 1,
+  "recallFloor": 0.95,
+  "truePositive": 30,
+  "falsePositive": 1,
+  "trueNegative": 26,
+  "falseNegative": 0,
+  "falseSkips": [],
+  "falseRetrieves": [
+    {
+      "id": "act-pick-slot-2",
+      "input": "the first one please",
+      "reason": "pricing"
+    }
+  ]
+}

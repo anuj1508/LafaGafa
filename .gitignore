@@ -34,7 +34,6 @@ DECISIONS.md
 
 # Open questions and blockers. A working note, not a deliverable.
 PENDING.md
-evals/.results/
 
 # Scratch tooling: useful locally, not part of the build.
 internal/

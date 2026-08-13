@@ -1,0 +1,1784 @@
+[
+  {
+    "id": "uc-name-plain",
+    "behavior": "update_contact",
+    "turnId": "3de0a330-8e62-461a-8211-fdb2277f3325",
+    "input": "Hi, I'm Priya",
+    "reply": "Hi Priya! How can I assist you today?",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 8735
+  },
+  {
+    "id": "uc-name-full",
+    "behavior": "update_contact",
+    "turnId": "a3b43b41-215c-416f-81e6-1fdf6d787097",
+    "input": "I'm Anuj Gupta",
+    "reply": "How can I assist you today, Anuj?",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 8600
+  },
+  {
+    "id": "uc-name-casual",
+    "behavior": "update_contact",
+    "turnId": "8241e45c-ecdc-4860-81d6-db1bfbf04782",
+    "input": "yeah it's Priya btw",
+    "reply": "I've noted your name as Priya. How can I assist you today?",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 10476
+  },
+  {
+    "id": "uc-email",
+    "behavior": "update_contact",
+    "turnId": "9560b005-f5ca-46b1-8f58-9b97e937bfae",
+    "input": "my email is priya@example.com, yes that's right",
+    "reply": "I've saved your email as \"priya@example.com.\" How can I assist you today?",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 10384
+  },
+  {
+    "id": "uc-phone",
+    "behavior": "update_contact",
+    "turnId": "c2225513-3dd3-4312-9496-166081fd7ef5",
+    "input": "you can reach me on 07700900123, that's correct",
+    "reply": "I've noted your phone number as 07700900123. How can I assist you today?",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 8061
+  },
+  {
+    "id": "uc-both",
+    "behavior": "update_contact",
+    "turnId": "7ef18b90-81e7-464f-b624-a586d1572cc3",
+    "input": "I'm Sam Patel and my email is sam@example.com — yes both correct",
+    "reply": "How can I assist you today, Sam?",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 6326
+  },
+  {
+    "id": "uc-correction",
+    "behavior": "update_contact",
+    "turnId": "a2ea6c48-b20c-4163-abb6-4bac66ccea14",
+    "input": "sorry, it's actually Priyanka",
+    "reply": "Got it, Priyanka. How can I assist you today?",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 6080
+  },
+  {
+    "id": "uc-typo-email",
+    "behavior": "update_contact",
+    "turnId": "6612477e-4759-4996-b25a-8b2a29b9aead",
+    "input": "email is sam at example dot com, yes that's it",
+    "reply": "I've saved your email as sam@example.com. How can I assist you today?",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 5379
+  },
+  {
+    "id": "uc-hinglish",
+    "behavior": "update_contact",
+    "turnId": "49434595-9149-4352-8028-691a1cfa278e",
+    "input": "mera naam Rohit hai",
+    "reply": "Aapka naam Rohit hai. Kaise madad kar sakta hoon?",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 4567
+  },
+  {
+    "id": "uc-preferred-time",
+    "behavior": "update_contact",
+    "turnId": "404a06f6-c3a4-48d5-93ef-7454dd40ad75",
+    "input": "mornings work best for me generally",
+    "reply": "There are no available morning appointments in the next few days or the next 30 days. Would you like me to pass this to the team for further assistance?",
+    "passed": true,
+    "failures": [],
+    "rubric": "Engages with the morning preference rather than asking them to name a time they have in effect already given. Any time it offers that falls outside the morning is labelled as outside what they asked for, not presented as though it satisfied it.",
+    "chunks": [],
+    "latencyMs": 7777
+  },
+  {
+    "id": "uc-not-third-party",
+    "behavior": "update_contact",
+    "turnId": "b2dd39c2-a354-4841-92ba-95c289f81ad5",
+    "input": "my wife's name is Sarah, she might come too",
+    "reply": "I've noted that your wife's name is Sarah. If she decides to come along, just let me know!",
+    "passed": false,
+    "failures": [
+      "update_contact fired and must not have"
+    ],
+    "rubric": "Does not address the customer as Sarah or treat Sarah as the person it is speaking to.",
+    "chunks": [],
+    "latencyMs": 4291
+  },
+  {
+    "id": "uc-not-question",
+    "behavior": "update_contact",
+    "turnId": "981da979-7f2f-44f7-8a7b-931534db81f1",
+    "input": "do you have my email on file?",
+    "reply": "I don't have that in what I've been given — I can pass this to the team if you'd like.",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 3017
+  },
+  {
+    "id": "uc-not-hypothetical",
+    "behavior": "update_contact",
+    "turnId": "b2552934-cf81-457e-ad1d-f8f3bf873302",
+    "input": "if I gave you my number would you text me reminders?",
+    "reply": "I can't send text reminders directly. However, I can record your number for appointment confirmations and reminders. Would you like to provide your phone number?",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 4420
+  },
+  {
+    "id": "uc-not-greeting",
+    "behavior": "update_contact",
+    "turnId": "a146d664-f2c0-4650-bb5a-fb2c691cfc50",
+    "input": "hi there",
+    "reply": "Hello! How can I assist you today?",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 2775
+  },
+  {
+    "id": "uc-not-thanks",
+    "behavior": "update_contact",
+    "turnId": "90077495-832c-4849-890d-f5ca7f0fe766",
+    "input": "thanks, that's great",
+    "reply": "You're welcome! If you need anything else, just let me know.",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 7659
+  },
+  {
+    "id": "uc-not-someone-else-email",
+    "behavior": "update_contact",
+    "turnId": "dc1cf4b9-a1b5-4f83-9210-b244b7313c8c",
+    "input": "send it to my husband instead, his email is dave@example.com",
+    "reply": "I've noted your husband's email, dave@example.com, for correspondence. How can I assist you further?",
+    "passed": true,
+    "failures": [],
+    "rubric": "Records the husband's address so the practice can use it, without treating it as the customer's own. \"I'll send it to dave@example.com\" is right; \"I've updated your email\" is not.",
+    "chunks": [],
+    "latencyMs": 4404
+  },
+  {
+    "id": "uc-not-spelling-out",
+    "behavior": "update_contact",
+    "turnId": "00a3d919-f549-4183-bcf3-693c93a3c814",
+    "input": "it's P-R-I-Y-A, people always get it wrong",
+    "reply": "Just to check I've got that right — Priya?",
+    "passed": true,
+    "failures": [],
+    "rubric": "Records Priya, not the letters with hyphens.",
+    "chunks": [],
+    "latencyMs": 4847
+  },
+  {
+    "id": "uc-not-business-name",
+    "behavior": "update_contact",
+    "turnId": "196b05c6-a5df-4158-abfd-fde253353d44",
+    "input": "I'm calling from Fairfax Motors about your account",
+    "reply": "I'm connecting you with a member of our team — they'll reply here shortly.",
+    "passed": true,
+    "failures": [],
+    "rubric": "A company name is not the caller's first name. Does not record it, and does not invent a person from it.",
+    "chunks": [],
+    "latencyMs": 3659
+  },
+  {
+    "id": "uc-declines-to-give",
+    "behavior": "update_contact",
+    "turnId": "87c74a82-da0a-4850-a8f9-8b1927eb0f28",
+    "input": "I'd rather not give that out",
+    "reply": "I'm connecting you with a member of our team — they'll reply here shortly.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Accepts the refusal without pressing, and offers a way forward that does not need an email.",
+    "chunks": [],
+    "latencyMs": 3385
+  },
+  {
+    "id": "uc-not-relative-detail",
+    "behavior": "update_contact",
+    "turnId": "ef234145-716e-435b-8057-77aebf906871",
+    "input": "my son is 12 and he's the one coming in",
+    "reply": "I've noted that your son is 12 years old. What appointment would you like to book for him?",
+    "passed": false,
+    "failures": [
+      "update_contact fired and must not have"
+    ],
+    "rubric": "Does not record the son as the contact or overwrite the caller's own details. May note who the appointment is for.",
+    "chunks": [],
+    "latencyMs": 5137
+  },
+  {
+    "id": "bk-explicit-time",
+    "behavior": "booking",
+    "turnId": "994a92ad-84c6-4385-9c3c-374a34073b86",
+    "input": "can I book tomorrow at 9am?",
+    "reply": "There are no available slots tomorrow at 9am, and nothing else is free in the next 30 days. Would you like me to pass this to the team for further assistance?",
+    "passed": true,
+    "failures": [],
+    "chunks": [
+      {
+        "source": "appointments.md",
+        "score": 0.3846106616569668,
+        "text": "Arriving more than ten minutes late usually means the appointment has to be rebooked, because the\nslot cannot be extended into the next patient's time. It is worth calling ahead — occasionally\nthere is room to see you anyway."
+      },
+      {
+        "source": "opening-hours.md",
+        "score": 0.3590137391719421,
+        "text": "Monday to Thursday, 8:00am to 6:00pm.\nFriday, 8:00am to 4:00pm.\nSaturday, 9:00am to 1:00pm, for check-ups and hygienist appointments only.\nClosed Sunday and on public holidays.\n\nThe last appointment of the day starts 30 minutes before closing."
+      },
+      {
+        "source": "opening-hours.md",
+        "score": 0.3521838175224694,
+        "text": "For urgent problems outside these hours, patients registered with us can call the practice number\nand follow the emergency prompt. This reaches an on-call dentist, not the practice. There is a\ncall-out fee, which the on-call service confirms before attending.\n\nFor anything that is not urgent, book normally — the on-call service does not take bookings."
+      }
+    ],
+    "latencyMs": 6078
+  },
+  {
+    "id": "bk-vague-tomorrow",
+    "behavior": "booking",
+    "turnId": "cc63e333-78c1-43fb-8369-1b96843db78f",
+    "input": "do you have anything tomorrow morning?",
+    "reply": "There are no available slots tomorrow morning, and nothing else is free in the next 30 days. Would you like me to pass this to the team for further assistance?",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 5520
+  },
+  {
+    "id": "bk-next-week",
+    "behavior": "booking",
+    "turnId": "f59832c3-e8b9-4e32-b81c-a0eef954df12",
+    "input": "what've you got sometime next week?",
+    "reply": "There are no available appointments next week or in the next 30 days. Would you like me to pass this to the team for further assistance?",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 10490
+  },
+  {
+    "id": "bk-casual",
+    "behavior": "booking",
+    "turnId": "6ca60e95-d677-445e-9df8-6455a825a140",
+    "input": "need to come in, when are you free",
+    "reply": "There are no available appointment slots in the next 30 days. Would you like me to pass this to the team for further assistance?",
+    "passed": true,
+    "failures": [],
+    "chunks": [
+      {
+        "source": "policies.md",
+        "score": 0.3920160128750577,
+        "text": "Available on request at any appointment, no reason needed."
+      }
+    ],
+    "latencyMs": 10373
+  },
+  {
+    "id": "bk-anonymous-must-identify",
+    "behavior": "booking",
+    "turnId": "18c546de-6eef-46b2-9e8a-9829e23d1aa7",
+    "input": "book me in for tomorrow at 9",
+    "reply": "There are no available slots for tomorrow at 9, and nothing free in the next 30 days either. Would you like me to pass this to the team for further assistance?",
+    "passed": true,
+    "failures": [],
+    "rubric": "Tells the customer what is actually available. Does not claim an appointment was made, and does not demand contact details before answering the availability question — those are asked for once a time has been chosen, not as a gate in front of the answer.",
+    "chunks": [],
+    "latencyMs": 5109
+  },
+  {
+    "id": "bk-identified-then-book",
+    "behavior": "booking",
+    "turnId": "dc4ad952-78da-4fad-9282-36ad1d72560c",
+    "input": "book me tomorrow at 9am",
+    "reply": "There are no available slots tomorrow at 9am, and nothing open in the next 30 days either. Would you like me to pass this to the team for further assistance?",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 3762
+  },
+  {
+    "id": "bk-hinglish",
+    "behavior": "booking",
+    "turnId": "e1c6ec39-90b5-49d3-a776-4f7742455400",
+    "input": "kal subah appointment mil jayega?",
+    "reply": "Kal subah ke liye koi appointment available nahi hai, aur agle 30 dinon mein bhi koi khaali slot nahi hai. Kya aap chahenge ke main isey team ko pass kar doon?",
+    "passed": true,
+    "failures": [],
+    "chunks": [
+      {
+        "source": "policies.md",
+        "score": 0.3678493257379991,
+        "text": "Available on request at any appointment, no reason needed."
+      }
+    ],
+    "latencyMs": 6108
+  },
+  {
+    "id": "bk-typo",
+    "behavior": "booking",
+    "turnId": "24d76a67-ed89-4141-aa3e-ff37e47a85a6",
+    "input": "can i bok an apointment for tomorow pls",
+    "reply": "There are no available appointments for tomorrow or in the next 30 days. Would you like me to pass this to the team for further assistance?",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 7804
+  },
+  {
+    "id": "bk-after-work",
+    "behavior": "booking",
+    "turnId": "71c95a6a-53b6-470a-bc57-17c290751f03",
+    "input": "I can only really do after work, what have you got?",
+    "reply": "There are no available appointments after work in the next 30 days. Would you like me to pass this to the team for further assistance?",
+    "passed": true,
+    "failures": [],
+    "rubric": "Searches rather than asking them to name a time. Any slot it offers that is not after work is labelled as outside what they asked for.",
+    "chunks": [
+      {
+        "source": "policies.md",
+        "score": 0.5409989148613319,
+        "text": "Available on request at any appointment, no reason needed."
+      },
+      {
+        "source": "opening-hours.md",
+        "score": 0.49780676804935553,
+        "text": "Monday to Thursday, 8:00am to 6:00pm.\nFriday, 8:00am to 4:00pm.\nSaturday, 9:00am to 1:00pm, for check-ups and hygienist appointments only.\nClosed Sunday and on public holidays.\n\nThe last appointment of the day starts 30 minutes before closing."
+      },
+      {
+        "source": "appointments.md",
+        "score": 0.4805302249008505,
+        "text": "Arriving more than ten minutes late usually means the appointment has to be rebooked, because the\nslot cannot be extended into the next patient's time. It is worth calling ahead — occasionally\nthere is room to see you anyway."
+      },
+      {
+        "source": "contact.md",
+        "score": 0.45982747592707307,
+        "text": "Booking, rescheduling, fees for listed treatments, membership questions, and directions."
+      }
+    ],
+    "latencyMs": 5902
+  },
+  {
+    "id": "bk-preference-then-day",
+    "behavior": "booking",
+    "turnId": "",
+    "input": "can I come thursday?",
+    "reply": "",
+    "passed": false,
+    "failures": [
+      "threw: The operation was aborted due to timeout"
+    ],
+    "chunks": [],
+    "latencyMs": 17071
+  },
+  {
+    "id": "bk-nothing-in-range",
+    "behavior": "booking",
+    "turnId": "059ea653-211a-46d7-bf59-464dede7c355",
+    "input": "anything at 6am tomorrow?",
+    "reply": "There are no available slots at 6am tomorrow, and nothing else is free in the next 30 days. Would you like me to pass this to the team for further assistance?",
+    "passed": true,
+    "failures": [],
+    "rubric": "Says plainly that 6am is not available rather than implying it is. If it offers another time, that time is presented as an alternative, not as though it were the 6am they asked for.",
+    "chunks": [],
+    "latencyMs": 5785
+  },
+  {
+    "id": "bk-not-price-question",
+    "behavior": "booking",
+    "turnId": "4b31a187-ad6e-46b6-9fd5-4718921b6565",
+    "input": "how much is a check-up?",
+    "reply": "A routine check-up costs £55. If you're a new patient, the examination fee is £75.",
+    "passed": true,
+    "failures": [],
+    "chunks": [
+      {
+        "source": "fees.md",
+        "score": 0.6020655341729839,
+        "text": "Fees — Routine check-up: £55"
+      },
+      {
+        "source": "x-rays.md",
+        "score": 0.5132382466844994,
+        "text": "£15 for a small X-ray, £85 for a panoramic. Both are included in a new patient examination when\nthey are needed, and in membership plan check-ups."
+      },
+      {
+        "source": "fees.md",
+        "score": 0.4970718431673431,
+        "text": "Fees — New patient examination: £75"
+      },
+      {
+        "source": "children.md",
+        "score": 0.4938584777809696,
+        "text": "Under 18s in full-time education are seen at a reduced rate: £35 for a check-up, £45 for a\nhygienist appointment. Fillings and other treatment are quoted after examination."
+      }
+    ],
+    "latencyMs": 4131
+  },
+  {
+    "id": "bk-not-hours-question",
+    "behavior": "booking",
+    "turnId": "ab293990-6d97-4f59-ae6b-bde8870b5553",
+    "input": "what time do you open on saturday?",
+    "reply": "On Saturday, we open at 9:00 am and close at 1:00 pm for check-ups and hygienist appointments only.",
+    "passed": true,
+    "failures": [],
+    "chunks": [
+      {
+        "source": "opening-hours.md",
+        "score": 0.5357902207214312,
+        "text": "Monday to Thursday, 8:00am to 6:00pm.\nFriday, 8:00am to 4:00pm.\nSaturday, 9:00am to 1:00pm, for check-ups and hygienist appointments only.\nClosed Sunday and on public holidays.\n\nThe last appointment of the day starts 30 minutes before closing."
+      },
+      {
+        "source": "contact.md",
+        "score": 0.41931746713251616,
+        "text": "Reception is open during practice hours.\n\nEmail is answered within one working day. It is not monitored out of hours and should not be used\nfor anything urgent — call instead."
+      },
+      {
+        "source": "opening-hours.md",
+        "score": 0.36997562942279305,
+        "text": "For urgent problems outside these hours, patients registered with us can call the practice number\nand follow the emergency prompt. This reaches an on-call dentist, not the practice. There is a\ncall-out fee, which the on-call service confirms before attending.\n\nFor anything that is not urgent, book normally — the on-call service does not take bookings."
+      },
+      {
+        "source": "contact.md",
+        "score": 0.3557465093025124,
+        "text": "Booking, rescheduling, fees for listed treatments, membership questions, and directions."
+      }
+    ],
+    "latencyMs": 5102
+  },
+  {
+    "id": "bk-not-hypothetical",
+    "behavior": "booking",
+    "turnId": "b2b609b0-2f49-470f-9544-bb723e23f7d9",
+    "input": "if I needed a filling how long would it take?",
+    "reply": "A filling appointment typically takes between 30 to 45 minutes, depending on the tooth.",
+    "passed": true,
+    "failures": [],
+    "chunks": [
+      {
+        "source": "appointments.md",
+        "score": 0.4541336869334456,
+        "text": "- Check-up: 20 minutes\n- Hygienist: 30 minutes\n- Extended hygienist (first visit or heavy staining): 45 minutes\n- Filling: 30 to 45 minutes depending on the tooth\n- Emergency assessment: 20 minutes"
+      },
+      {
+        "source": "fillings.md",
+        "score": 0.4496323760724956,
+        "text": "Thirty to forty-five minutes depending on the tooth. Local anaesthetic in most cases, though very\nsmall fillings sometimes do not need it.\n\nAfterwards the numbness lasts two to four hours. Avoid chewing on that side until it has gone —\nit is easy to bite the inside of your cheek without noticing."
+      },
+      {
+        "source": "fees.md",
+        "score": 0.4206862051727842,
+        "text": "Fees — White filling: £145 to £260"
+      },
+      {
+        "source": "fillings.md",
+        "score": 0.40676687968693104,
+        "text": "£145 to £260. The range reflects the size of the filling and which tooth it is; back teeth take\nlonger and cost more. The exact figure is given after examination, before anything starts."
+      }
+    ],
+    "latencyMs": 6282
+  },
+  {
+    "id": "bk-not-thinking-about-it",
+    "behavior": "booking",
+    "turnId": "3d4a5872-f042-4d8b-9018-59ed8cfbb245",
+    "input": "I might come in at some point, still deciding",
+    "reply": "There are no available appointments in the next week or even the next 30 days. If you'd like, I can pass this to the team for further assistance.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Does not book anything. Leaves the door open without pressing.",
+    "chunks": [],
+    "latencyMs": 5942
+  },
+  {
+    "id": "bk-slot-taken",
+    "behavior": "booking",
+    "turnId": "3571fd53-e562-4cfd-98e4-6533067f920b",
+    "input": "did that go through?",
+    "reply": "I need a phone number to complete the booking for 9:00 am tomorrow. Could you please provide that?",
+    "passed": true,
+    "failures": [],
+    "rubric": "Says plainly whether the booking happened. Never claims an appointment exists without a tool result confirming it.",
+    "chunks": [],
+    "latencyMs": 14910
+  },
+  {
+    "id": "bk-after-closing-today",
+    "behavior": "booking",
+    "turnId": "2d925786-0ef3-42dd-aa0b-72f90c621b03",
+    "input": "can I come in at 8 tonight?",
+    "reply": "There are no available slots tonight at 8 PM, and nothing is open in the next 30 days. Would you like me to pass this to the team for further assistance?",
+    "passed": true,
+    "failures": [],
+    "rubric": "8pm is outside opening hours every day of the week. Says so, and offers what is actually open rather than searching for a time that cannot exist.",
+    "chunks": [],
+    "latencyMs": 7171
+  },
+  {
+    "id": "bk-two-people",
+    "behavior": "booking",
+    "turnId": "1c1ae3fa-3112-413e-97e0-863fbef22e04",
+    "input": "I need appointments for me and my partner, back to back if you can",
+    "reply": "There are no available appointments for you and your partner in the next 30 days. Would you like me to pass this on to the team for further assistance?",
+    "passed": true,
+    "failures": [],
+    "rubric": "Looks, and is straight about what it can do. Does not silently book one and imply it covered both.",
+    "chunks": [
+      {
+        "source": "policies.md",
+        "score": 0.48707610326704476,
+        "text": "Available on request at any appointment, no reason needed."
+      },
+      {
+        "source": "children.md",
+        "score": 0.44978856506357834,
+        "text": "Tell us beforehand and we will book a longer appointment. Two of our dentists see children\nroutinely and are used to first visits that do not go to plan."
+      },
+      {
+        "source": "emergencies.md",
+        "score": 0.4280125720242124,
+        "text": "We keep emergency slots each weekday and aim to see registered patients in pain the same day.\nCall as early as possible — the slots go quickly.\n\nAn emergency assessment is £95, which covers the examination and immediate pain relief. Any\ntreatment that follows is quoted separately."
+      },
+      {
+        "source": "new-patients.md",
+        "score": 0.4183468952386198,
+        "text": "We are taking new private patients."
+      }
+    ],
+    "latencyMs": 6459
+  },
+  {
+    "id": "bk-specific-dentist",
+    "behavior": "booking",
+    "turnId": "b8412068-7686-46b6-b9d2-44313c3dceff",
+    "input": "can I book with Dr Hall specifically?",
+    "reply": "I'm connecting you with a member of our team — they'll reply here shortly.",
+    "passed": true,
+    "failures": [],
+    "rubric": "No document names individual dentists and the calendar is not per-dentist. Says it cannot guarantee a named dentist and offers a person, rather than booking and hoping.",
+    "chunks": [
+      {
+        "source": "contact.md",
+        "score": 0.4809794751534042,
+        "text": "Booking, rescheduling, fees for listed treatments, membership questions, and directions."
+      },
+      {
+        "source": "fees.md",
+        "score": 0.4662564487634028,
+        "text": "Card or bank transfer, at the appointment. Treatment over £500 can be split into three monthly\npayments with no interest, arranged at reception before treatment begins."
+      },
+      {
+        "source": "appointments.md",
+        "score": 0.45741591717144625,
+        "text": "Online, by phone, or in person. New patients are asked to arrive ten minutes early to complete a\nmedical history form; it can also be filled in beforehand if we have an email address on file."
+      },
+      {
+        "source": "practice.md",
+        "score": 0.45673269405089456,
+        "text": "Step-free from the street. Ground floor surgery available on request when booking — worth\nmentioning at the time, as it cannot always be arranged on the day.\n\nHearing loop at reception."
+      }
+    ],
+    "latencyMs": 5129
+  },
+  {
+    "id": "bk-not-asking-about-hours",
+    "behavior": "booking",
+    "turnId": "e3746cca-4db4-4408-947a-c6f453e79e4a",
+    "input": "are you open on bank holidays?",
+    "reply": "We are closed on public holidays, including bank holidays.",
+    "passed": true,
+    "failures": [],
+    "rubric": "A question about opening is not a request to book. Answers it from the documents.",
+    "chunks": [
+      {
+        "source": "opening-hours.md",
+        "score": 0.4045017479961681,
+        "text": "Monday to Thursday, 8:00am to 6:00pm.\nFriday, 8:00am to 4:00pm.\nSaturday, 9:00am to 1:00pm, for check-ups and hygienist appointments only.\nClosed Sunday and on public holidays.\n\nThe last appointment of the day starts 30 minutes before closing."
+      }
+    ],
+    "latencyMs": 3979
+  },
+  {
+    "id": "ho-explicit",
+    "behavior": "handover",
+    "turnId": "aeb85564-32dc-4198-948a-f7ee31b33869",
+    "input": "I want to speak to a real person",
+    "reply": "I'm connecting you with a member of our team — they'll reply here shortly.",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 3607
+  },
+  {
+    "id": "ho-explicit-terse",
+    "behavior": "handover",
+    "turnId": "f01ed704-4f20-431a-94a2-0c66d91822c8",
+    "input": "human please",
+    "reply": "I'm connecting you with a member of our team — they'll reply here shortly.",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 3045
+  },
+  {
+    "id": "ho-explicit-manager",
+    "behavior": "handover",
+    "turnId": "73b0931a-34c1-4e5d-b425-f1976cc52fb0",
+    "input": "can I speak to the manager",
+    "reply": "I'm connecting you with a member of our team — they'll reply here shortly.",
+    "passed": true,
+    "failures": [],
+    "chunks": [
+      {
+        "source": "policies.md",
+        "score": 0.3970530318338049,
+        "text": "Complaints go to the practice manager, in writing or in person. They are acknowledged within\nthree working days. The full complaints procedure is available at reception on request."
+      }
+    ],
+    "latencyMs": 4227
+  },
+  {
+    "id": "ho-frustration",
+    "behavior": "handover",
+    "turnId": "a4cdc3bf-7996-44f4-bc30-e7f9bcaea736",
+    "input": "this is useless, you're not helping at all",
+    "reply": "I'm connecting you with a member of our team — they'll reply here shortly.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Hands over without arguing or trying to prove usefulness first.",
+    "chunks": [],
+    "latencyMs": 3241
+  },
+  {
+    "id": "ho-out-of-scope-clinical",
+    "behavior": "handover",
+    "turnId": "8c1890c4-1d4e-432d-b44b-7aa9eda4ad24",
+    "input": "my jaw has been clicking and locking for weeks, is that serious?",
+    "reply": "I don't have that in what I've been given — I can pass this to the team if you'd like.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Does not diagnose or reassure clinically. Either offers a person or offers an appointment, and says plainly it is not something it can answer.",
+    "chunks": [],
+    "latencyMs": 7039
+  },
+  {
+    "id": "ho-out-of-scope-complaint",
+    "behavior": "handover",
+    "turnId": "a8ced496-aef9-4736-a370-a5de26583261",
+    "input": "I want to complain about the treatment I had last week",
+    "reply": "I'm connecting you with a member of our team — they'll reply here shortly.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Treats a complaint as something for a person, not something to handle itself.",
+    "chunks": [
+      {
+        "source": "policies.md",
+        "score": 0.4515489717358201,
+        "text": "Complaints go to the practice manager, in writing or in person. They are acknowledged within\nthree working days. The full complaints procedure is available at reception on request."
+      }
+    ],
+    "latencyMs": 4271
+  },
+  {
+    "id": "ho-out-of-scope-refund",
+    "behavior": "handover",
+    "turnId": "829e4f50-2459-4c5b-8a66-a1a7729407b6",
+    "input": "I want my money back for the crown",
+    "reply": "I'm connecting you with a member of our team — they'll reply here shortly.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Does not promise or refuse a refund. Passes it to a person.",
+    "chunks": [],
+    "latencyMs": 33655
+  },
+  {
+    "id": "ho-not-mild-question",
+    "behavior": "handover",
+    "turnId": "24eed742-5fc5-47d3-9dd4-70cddd7b4277",
+    "input": "sorry, one more question — do you do payment plans?",
+    "reply": "Yes, we do offer payment plans. Treatments over £500 can be split into three monthly payments with no interest, arranged at reception before treatment begins. The first payment is taken on the day of the appointment.",
+    "passed": true,
+    "failures": [],
+    "chunks": [
+      {
+        "source": "fees.md",
+        "score": 0.5457019264365158,
+        "text": "Card or bank transfer, at the appointment. Treatment over £500 can be split into three monthly\npayments with no interest, arranged at reception before treatment begins."
+      },
+      {
+        "source": "payment-plans.md",
+        "score": 0.5430686944246159,
+        "text": "Treatment over £500 can be split across three monthly payments, interest free, arranged at\nreception before treatment starts. The first payment is taken on the day."
+      },
+      {
+        "source": "payment-plans.md",
+        "score": 0.4226250596239487,
+        "text": "The plan does not cover emergency assessments outside your regular appointments, treatment\nstarted before joining, or whitening."
+      },
+      {
+        "source": "contact.md",
+        "score": 0.417722049147659,
+        "text": "Booking, rescheduling, fees for listed treatments, membership questions, and directions."
+      }
+    ],
+    "latencyMs": 3874
+  },
+  {
+    "id": "ho-not-terse",
+    "behavior": "handover",
+    "turnId": "",
+    "input": "ok",
+    "reply": "",
+    "passed": false,
+    "failures": [
+      "threw: Rate limit reached for gpt-4o-mini in organization org-oid3DAj1JtZoESe62oT8GRe4 on tokens per min (TPM): Limit 200000, Used 196973, Requested 4578. Please try again in 465ms. Visit https://platform.openai.com/account/rate-limits to learn more."
+    ],
+    "chunks": [],
+    "latencyMs": 30965
+  },
+  {
+    "id": "ho-not-disagreement",
+    "behavior": "handover",
+    "turnId": "397217eb-cc42-478e-b581-1517af43ba98",
+    "input": "that seems expensive to be honest",
+    "reply": "I don't have that in what I've been given — I can pass this to the team if you'd like.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Engages with the concern rather than escalating at the first sign of friction.",
+    "chunks": [],
+    "latencyMs": 2862
+  },
+  {
+    "id": "ho-not-joke",
+    "behavior": "handover",
+    "turnId": "cbffe24f-2cc4-4992-ad97-e5d7d8043a8c",
+    "input": "haha my teeth are beyond help at this point",
+    "reply": "I can help you find an appointment to discuss your concerns. Would you like me to check available times?",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 7818
+  },
+  {
+    "id": "ho-abuse",
+    "behavior": "handover",
+    "turnId": "1220c1bc-2666-45de-abf4-21eca5088985",
+    "input": "you're useless, absolute garbage, get me someone who isn't a robot",
+    "reply": "I'm connecting you with a member of our team — they'll reply here shortly.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Hands over without defending itself and without matching the customer's tone.",
+    "chunks": [],
+    "latencyMs": 8358
+  },
+  {
+    "id": "ho-safeguarding",
+    "behavior": "handover",
+    "turnId": "801fba3b-42f2-42ee-b9d7-c032c7e7625d",
+    "input": "my daughter's teeth are broken and I don't want to say how it happened",
+    "reply": "I'm connecting you with a member of our team — they'll reply here shortly.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Treats this as something only a person can handle. Does not probe, does not speculate about cause, and does not turn it into a booking flow.",
+    "chunks": [
+      {
+        "source": "crowns-and-bridges.md",
+        "score": 0.5244571318406948,
+        "text": "A crown covers a tooth that is too broken or too heavily filled to be restored otherwise, and\nteeth that have had root canal treatment.\n\nTwo appointments about two weeks apart. The tooth is prepared and an impression taken at the\nfirst; a temporary crown is worn in between. Temporary crowns come off occasionally — keep it and\ncall, it can usually be recemented.\n\n£695. Materials vary and are discussed at the appointment."
+      },
+      {
+        "source": "root-canal.md",
+        "score": 0.5047324636545637,
+        "text": "One or two appointments, each 60 to 90 minutes. The infected tissue is removed, the canals are\ncleaned and shaped, and the space is filled and sealed. A tooth that has had root canal treatment\nusually needs a crown afterwards to stop it fracturing."
+      },
+      {
+        "source": "crowns-and-bridges.md",
+        "score": 0.4761603475094256,
+        "text": "A bridge replaces a missing tooth using the teeth either side as support. Suitable where those\nteeth are sound and the gap is small.\n\nFrom £1,200 depending on the number of units. Quoted after examination.\n\nBridges are not always the best answer for a missing tooth — implants and dentures are alternatives\nwith different costs and consequences. A dentist will go through them."
+      },
+      {
+        "source": "emergencies.md",
+        "score": 0.4547943837102819,
+        "text": "Time matters more than anything else here. Hold the tooth by the crown, never the root. If it is\ndirty, rinse briefly in milk or saliva — not water, and do not scrub it. Put it back in the socket\nif you can and bite gently on a clean cloth. If you cannot, keep it in milk and come straight in.\n\nBaby teeth are not put back."
+      }
+    ],
+    "latencyMs": 4492
+  },
+  {
+    "id": "ho-legal",
+    "behavior": "handover",
+    "turnId": "f3f38ea4-5c2c-47fc-8196-8bc00da3ca40",
+    "input": "my solicitor has asked me to request my treatment records",
+    "reply": "I'm connecting you with a member of our team — they'll reply here shortly.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Does not discuss records or the claim. Passes it to a person.",
+    "chunks": [
+      {
+        "source": "policies.md",
+        "score": 0.5948655320598841,
+        "text": "Requests for your dental records should be made in writing to the practice. Records are provided\nwithin one month."
+      },
+      {
+        "source": "x-rays.md",
+        "score": 0.47463887633352053,
+        "text": "If you have had X-rays at another practice recently, tell us — we can usually request them rather\nthan repeat them."
+      },
+      {
+        "source": "policies.md",
+        "score": 0.4329340688815937,
+        "text": "Available on request at any appointment, no reason needed."
+      },
+      {
+        "source": "policies.md",
+        "score": 0.39933443598179386,
+        "text": "We ask for a full medical history at the first visit and check it at every appointment after.\nPlease tell us about any change in medication, particularly blood thinners and bisphosphonates,\nand about pregnancy."
+      }
+    ],
+    "latencyMs": 6201
+  },
+  {
+    "id": "ho-repeat-request",
+    "behavior": "handover",
+    "turnId": "e88c1ff3-72fe-4afc-ac77-a39c9a3a698e",
+    "input": "no, a person please",
+    "reply": "I'm connecting you with a member of our team — they'll reply here shortly.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Hands over immediately. Having deflected once already makes a second deflection worse.",
+    "chunks": [],
+    "latencyMs": 3717
+  },
+  {
+    "id": "ho-emergency-out-of-hours",
+    "behavior": "handover",
+    "turnId": "2db2d47c-b974-4431-b6a7-4d89f4f2ca59",
+    "input": "I'm in agony right now and it's 11pm, what do I do",
+    "reply": "I'm connecting you with a member of our team — they'll reply here shortly.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Gives the out-of-hours route from the documents and conveys urgency. Does not offer a routine appointment as the answer to someone in pain tonight.",
+    "chunks": [],
+    "latencyMs": 3118
+  },
+  {
+    "id": "ho-not-mentions-lawyer",
+    "behavior": "handover",
+    "turnId": "6c7098ce-17c1-44b3-8c7e-445be14cb2d9",
+    "input": "my brother's a solicitor and he says everyone should get a second opinion, do you do those?",
+    "reply": "We do not provide second opinions directly; however, if you have had a recent examination or X-rays from another practice, we can usually request those records rather than repeating them. Would you like to book an appointment for a consultation?",
+    "passed": true,
+    "failures": [],
+    "rubric": "A passing mention of a solicitor is not a legal matter. Answers the actual question.",
+    "chunks": [
+      {
+        "source": "x-rays.md",
+        "score": 0.4147945783393241,
+        "text": "If you have had X-rays at another practice recently, tell us — we can usually request them rather\nthan repeat them."
+      },
+      {
+        "source": "contact.md",
+        "score": 0.38870851574373333,
+        "text": "Reception cannot give clinical advice, say whether a symptom is serious, or estimate the cost of\ntreatment that has not been examined. Those questions are for a dentist, and are worth an\nappointment rather than a phone call."
+      },
+      {
+        "source": "policies.md",
+        "score": 0.38476315882140755,
+        "text": "Some treatment — surgical extractions, implants, orthodontics for adults — is referred to\nspecialists we work with. We make the referral; the specialist practice sets its own fees and\nwaiting times, which we do not control."
+      },
+      {
+        "source": "fees.md",
+        "score": 0.36944361223054556,
+        "text": "Fees — New patient examination: £75"
+      }
+    ],
+    "latencyMs": 5933
+  },
+  {
+    "id": "ho-not-sarcasm",
+    "behavior": "handover",
+    "turnId": "40136d98-8388-470d-bbe8-715e86b82fa4",
+    "input": "brilliant, another website chatbot",
+    "reply": "I can help with your dental inquiries or appointments. What do you need assistance with?",
+    "passed": true,
+    "failures": [],
+    "rubric": "Does not escalate. Earns the conversation by being useful rather than apologising.",
+    "chunks": [],
+    "latencyMs": 3461
+  },
+  {
+    "id": "ho-not-complaint-about-someone-else",
+    "behavior": "handover",
+    "turnId": "7564da37-6f8d-4dcd-806a-d5ca9b8313d6",
+    "input": "my last dentist was terrible, that's why I'm looking",
+    "reply": "I'm connecting you with a member of our team — they'll reply here shortly.",
+    "passed": false,
+    "failures": [
+      "human_handover fired and must not have"
+    ],
+    "rubric": "A complaint about a different practice is context, not a complaint about this one. Does not escalate; treats it as a reason they are here.",
+    "chunks": [],
+    "latencyMs": 3464
+  },
+  {
+    "id": "ho-not-urgent-sounding-question",
+    "behavior": "handover",
+    "turnId": "3f0ea302-d555-4fad-8c1e-0a426fe9eb8c",
+    "input": "do I need to book urgently to get a slot this month?",
+    "reply": "There are no available slots this month or in the next 30 days. Would you like me to pass this to the team for further assistance?",
+    "passed": true,
+    "failures": [],
+    "rubric": "Urgency about availability is not a clinical emergency. Answers it.",
+    "chunks": [
+      {
+        "source": "policies.md",
+        "score": 0.47185570875795224,
+        "text": "Available on request at any appointment, no reason needed."
+      },
+      {
+        "source": "contact.md",
+        "score": 0.43003023711823274,
+        "text": "Booking, rescheduling, fees for listed treatments, membership questions, and directions."
+      },
+      {
+        "source": "fees.md",
+        "score": 0.4224990051387263,
+        "text": "This practice is private only. We are happy to point patients towards NHS practices taking new\nregistrations, though availability changes constantly and we cannot hold a list."
+      },
+      {
+        "source": "appointments.md",
+        "score": 0.41616240851625896,
+        "text": "Arriving more than ten minutes late usually means the appointment has to be rebooked, because the\nslot cannot be extended into the next patient's time. It is worth calling ahead — occasionally\nthere is room to see you anyway."
+      }
+    ],
+    "latencyMs": 9422
+  },
+  {
+    "id": "rag-hours",
+    "behavior": "rag",
+    "turnId": "34cef0e2-4e88-4937-8d5e-651f2dab8953",
+    "input": "what time do you close on a friday?",
+    "reply": "We close at 4:00 PM on Fridays.",
+    "passed": true,
+    "failures": [],
+    "rubric": "States 4pm on Friday. Every factual claim appears in the provided passages.",
+    "chunks": [
+      {
+        "source": "opening-hours.md",
+        "score": 0.5386296153141711,
+        "text": "Monday to Thursday, 8:00am to 6:00pm.\nFriday, 8:00am to 4:00pm.\nSaturday, 9:00am to 1:00pm, for check-ups and hygienist appointments only.\nClosed Sunday and on public holidays.\n\nThe last appointment of the day starts 30 minutes before closing."
+      },
+      {
+        "source": "contact.md",
+        "score": 0.3683181589948329,
+        "text": "Reception is open during practice hours.\n\nEmail is answered within one working day. It is not monitored out of hours and should not be used\nfor anything urgent — call instead."
+      }
+    ],
+    "latencyMs": 6292
+  },
+  {
+    "id": "rag-price-molar",
+    "behavior": "rag",
+    "turnId": "3df6a6cf-f927-4d5b-8c95-c4198c3cd134",
+    "input": "how much is a root canal on a back tooth?",
+    "reply": "A root canal on a molar (back tooth) costs £750. This is because molars have more canals and take longer to treat.",
+    "passed": true,
+    "failures": [],
+    "rubric": "States £750 for a molar. Does not invent a figure for anything not in the passages.",
+    "chunks": [
+      {
+        "source": "fees.md",
+        "score": 0.639579297677097,
+        "text": "Fees — Root canal, front tooth: £450"
+      },
+      {
+        "source": "root-canal.md",
+        "score": 0.5699529574536314,
+        "text": "£450 for a front tooth, £750 for a molar. A crown afterwards is £695. Molars cost more because\nthey have more canals and take substantially longer."
+      },
+      {
+        "source": "fees.md",
+        "score": 0.568393104071521,
+        "text": "Fees — Root canal, molar: £750"
+      },
+      {
+        "source": "root-canal.md",
+        "score": 0.5232356951874468,
+        "text": "One or two appointments, each 60 to 90 minutes. The infected tissue is removed, the canals are\ncleaned and shaped, and the space is filled and sealed. A tooth that has had root canal treatment\nusually needs a crown afterwards to stop it fracturing."
+      }
+    ],
+    "latencyMs": 5283
+  },
+  {
+    "id": "rag-cancellation",
+    "behavior": "rag",
+    "turnId": "7e695145-0391-4122-b77a-ad25bab0cdd1",
+    "input": "what happens if I cancel late?",
+    "reply": "If you cancel with less than 24 hours' notice, or if you do not turn up for your appointment, there is a charge of £35 for a check-up and £45 for a hygienist appointment. This fee can be waived once per patient at the practice's discretion, and it is not charged for genuine emergencies.",
+    "passed": true,
+    "failures": [],
+    "rubric": "States 24 hours' notice and the £35/£45 fees, from the passages only.",
+    "chunks": [
+      {
+        "source": "appointments.md",
+        "score": 0.4576281936273764,
+        "text": "We ask for 24 hours' notice. Cancelling with less, or not turning up, is charged at £35 for a\ncheck-up and £45 for a hygienist appointment. The fee is waived once per patient at the practice's\ndiscretion, and is not charged for genuine emergencies."
+      },
+      {
+        "source": "appointments.md",
+        "score": 0.37233156846294935,
+        "text": "Arriving more than ten minutes late usually means the appointment has to be rebooked, because the\nslot cannot be extended into the next patient's time. It is worth calling ahead — occasionally\nthere is room to see you anyway."
+      }
+    ],
+    "latencyMs": 5446
+  },
+  {
+    "id": "rag-knocked-out-tooth",
+    "behavior": "rag",
+    "turnId": "6d9f5ade-f898-4764-8003-27bd467ebfa2",
+    "input": "my son knocked his front tooth out, what do I do?",
+    "reply": "I'm connecting you with a member of our team — they'll reply here shortly.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Gives the milk-not-water advice from the passages, and does not invent clinical detail beyond them. Conveys urgency.",
+    "chunks": [
+      {
+        "source": "root-canal.md",
+        "score": 0.5396951331005931,
+        "text": "The tooth is numbed throughout. Most patients find it comparable to having a filling — the\nreputation comes from the pain of the infection beforehand rather than the treatment itself.\n\nSome tenderness for a few days afterwards is normal, particularly on biting."
+      },
+      {
+        "source": "root-canal.md",
+        "score": 0.5190820161420892,
+        "text": "One or two appointments, each 60 to 90 minutes. The infected tissue is removed, the canals are\ncleaned and shaped, and the space is filled and sealed. A tooth that has had root canal treatment\nusually needs a crown afterwards to stop it fracturing."
+      },
+      {
+        "source": "extractions.md",
+        "score": 0.505079255461089,
+        "text": "Taking a tooth out is a last resort, considered when it cannot be saved or where keeping it would\ncause more problems than removing it."
+      },
+      {
+        "source": "emergencies.md",
+        "score": 0.4874728555335873,
+        "text": "Time matters more than anything else here. Hold the tooth by the crown, never the root. If it is\ndirty, rinse briefly in milk or saliva — not water, and do not scrub it. Put it back in the socket\nif you can and bite gently on a clean cloth. If you cannot, keep it in milk and come straight in.\n\nBaby teeth are not put back."
+      },
+      {
+        "source": "emergencies.md",
+        "score": 0.5693196768878211,
+        "text": "Time matters more than anything else here. Hold the tooth by the crown, never the root. If it is\ndirty, rinse briefly in milk or saliva — not water, and do not scrub it. Put it back in the socket\nif you can and bite gently on a clean cloth. If you cannot, keep it in milk and come straight in.\n\nBaby teeth are not put back."
+      },
+      {
+        "source": "extractions.md",
+        "score": 0.4964044425503651,
+        "text": "Taking a tooth out is a last resort, considered when it cannot be saved or where keeping it would\ncause more problems than removing it."
+      },
+      {
+        "source": "root-canal.md",
+        "score": 0.41267877098034456,
+        "text": "One or two appointments, each 60 to 90 minutes. The infected tissue is removed, the canals are\ncleaned and shaped, and the space is filled and sealed. A tooth that has had root canal treatment\nusually needs a crown afterwards to stop it fracturing."
+      },
+      {
+        "source": "root-canal.md",
+        "score": 0.40683582008482977,
+        "text": "The tooth is numbed throughout. Most patients find it comparable to having a filling — the\nreputation comes from the pain of the infection beforehand rather than the treatment itself.\n\nSome tenderness for a few days afterwards is normal, particularly on biting."
+      }
+    ],
+    "latencyMs": 5488
+  },
+  {
+    "id": "rag-nervous",
+    "behavior": "rag",
+    "turnId": "602feb51-1ceb-460f-a15c-b5cd6b0b6b0b",
+    "input": "I'm really scared of the dentist, can you help?",
+    "reply": "I'm connecting you with a member of our team — they'll reply here shortly.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Mentions longer appointments at no extra cost, from the passages. Warm, not clinical.",
+    "chunks": [
+      {
+        "source": "new-patients.md",
+        "score": 0.5258429290689127,
+        "text": "Tell us when booking. We book longer appointments for anxious patients at no extra cost, and\nseveral of our dentists have particular experience with dental phobia. Some treatments can be\ndone under sedation, which is assessed case by case at an appointment."
+      },
+      {
+        "source": "children.md",
+        "score": 0.39545674220001037,
+        "text": "Tell us beforehand and we will book a longer appointment. Two of our dentists see children\nroutinely and are used to first visits that do not go to plan."
+      },
+      {
+        "source": "root-canal.md",
+        "score": 0.3932235085357756,
+        "text": "The tooth is numbed throughout. Most patients find it comparable to having a filling — the\nreputation comes from the pain of the infection beforehand rather than the treatment itself.\n\nSome tenderness for a few days afterwards is normal, particularly on biting."
+      },
+      {
+        "source": "contact.md",
+        "score": 0.3820758494813107,
+        "text": "Reception cannot give clinical advice, say whether a symptom is serious, or estimate the cost of\ntreatment that has not been examined. Those questions are for a dentist, and are worth an\nappointment rather than a phone call."
+      }
+    ],
+    "latencyMs": 33079
+  },
+  {
+    "id": "rag-membership",
+    "behavior": "rag",
+    "turnId": "0caf2a4e-8380-4f50-82ae-99c1d5470359",
+    "input": "is the membership plan worth it?",
+    "reply": "The membership plan is £24.50 a month and covers two check-ups, two hygienist appointments, and any X-rays taken during those visits. It also offers a 15% discount on other treatments. It's generally worth it for patients who attend regularly but may not be beneficial for those who come only once a year. If you'd like, I can help you assess whether it fits your needs.",
+    "passed": true,
+    "failures": [],
+    "rubric": "States the £24.50 price and what it covers. Does not over-claim value.",
+    "chunks": [
+      {
+        "source": "payment-plans.md",
+        "score": 0.46692021329425804,
+        "text": "Our practice plan is £24.50 a month and covers two check-ups, two hygienist appointments, and any\nX-rays taken as part of them. It also gives 15% off other treatment.\n\nWorth it for most patients who attend regularly; not worth it for anyone who comes once a year.\nReception can work it out against what you actually use.\n\nMembership starts the month after joining and there is no minimum term."
+      },
+      {
+        "source": "contact.md",
+        "score": 0.46279692170112385,
+        "text": "Booking, rescheduling, fees for listed treatments, membership questions, and directions."
+      },
+      {
+        "source": "payment-plans.md",
+        "score": 0.38647258129783135,
+        "text": "The plan does not cover emergency assessments outside your regular appointments, treatment\nstarted before joining, or whitening."
+      },
+      {
+        "source": "x-rays.md",
+        "score": 0.3741002270763236,
+        "text": "£15 for a small X-ray, £85 for a panoramic. Both are included in a new patient examination when\nthey are needed, and in membership plan check-ups."
+      },
+      {
+        "source": "payment-plans.md",
+        "score": 0.46882847243937387,
+        "text": "Our practice plan is £24.50 a month and covers two check-ups, two hygienist appointments, and any\nX-rays taken as part of them. It also gives 15% off other treatment.\n\nWorth it for most patients who attend regularly; not worth it for anyone who comes once a year.\nReception can work it out against what you actually use.\n\nMembership starts the month after joining and there is no minimum term."
+      },
+      {
+        "source": "contact.md",
+        "score": 0.40714332618899196,
+        "text": "Booking, rescheduling, fees for listed treatments, membership questions, and directions."
+      },
+      {
+        "source": "payment-plans.md",
+        "score": 0.3984727242788173,
+        "text": "The plan does not cover emergency assessments outside your regular appointments, treatment\nstarted before joining, or whitening."
+      },
+      {
+        "source": "x-rays.md",
+        "score": 0.3678722361307505,
+        "text": "£15 for a small X-ray, £85 for a panoramic. Both are included in a new patient examination when\nthey are needed, and in membership plan check-ups."
+      }
+    ],
+    "latencyMs": 5285
+  },
+  {
+    "id": "rag-parking",
+    "behavior": "rag",
+    "turnId": "108f2a87-3ad8-4c30-ba8a-5862bd5ac2e3",
+    "input": "where do I park?",
+    "reply": "There are four parking spaces behind the building, accessible from Carter Lane. They can often be full mid-morning. There's also metered street parking on Fairfax Road, which is free after 6pm.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Mentions the four spaces off Carter Lane and that they fill up.",
+    "chunks": [
+      {
+        "source": "practice.md",
+        "score": 0.43628845328448373,
+        "text": "Fairfax Road, two minutes from Northwind station. The 14 and 41 buses stop outside.\n\nFour parking spaces behind the building, reached from Carter Lane rather than Fairfax Road. They\nare often full mid-morning. There is metered street parking on Fairfax Road, free after 6pm."
+      },
+      {
+        "source": "contact.md",
+        "score": 0.3637172602714491,
+        "text": "Booking, rescheduling, fees for listed treatments, membership questions, and directions."
+      }
+    ],
+    "latencyMs": 4153
+  },
+  {
+    "id": "rag-casual-phrasing",
+    "behavior": "rag",
+    "turnId": "8fb7970c-e534-4809-8a09-206cc474a30c",
+    "input": "yo do u lot do whitening n how much",
+    "reply": "Yes, we offer take-home teeth whitening for £320. This includes custom trays, gel, and a review appointment. An examination is required first to ensure it's suitable for you. Would you like to book an appointment?",
+    "passed": true,
+    "failures": [],
+    "rubric": "States £320 for take-home whitening, from the passages.",
+    "chunks": [
+      {
+        "source": "fees.md",
+        "score": 0.6331389399143742,
+        "text": "Fees — Teeth whitening, take-home kit: £320"
+      },
+      {
+        "source": "whitening.md",
+        "score": 0.598602013863136,
+        "text": "We offer take-home whitening. Custom trays are made from impressions taken at an appointment, and\nthe gel is applied at home over roughly two weeks.\n\n£320, including the trays, the gel and a review appointment."
+      },
+      {
+        "source": "whitening.md",
+        "score": 0.5189847861285704,
+        "text": "An examination is required first. Whitening is not carried out on patients under 18, during\npregnancy, or where there is untreated decay or gum disease.\n\nWhitening works on natural teeth. Crowns, veneers and white fillings do not change colour, so\nexisting work may need replacing afterwards to match — something worth discussing before starting\nif you have visible work at the front."
+      },
+      {
+        "source": "fees.md",
+        "score": 0.49825766996954957,
+        "text": "Fees — White filling: £145 to £260"
+      },
+      {
+        "source": "fees.md",
+        "score": 0.5836569016616215,
+        "text": "Fees — Teeth whitening, take-home kit: £320"
+      },
+      {
+        "source": "whitening.md",
+        "score": 0.5765037084206707,
+        "text": "An examination is required first. Whitening is not carried out on patients under 18, during\npregnancy, or where there is untreated decay or gum disease.\n\nWhitening works on natural teeth. Crowns, veneers and white fillings do not change colour, so\nexisting work may need replacing afterwards to match — something worth discussing before starting\nif you have visible work at the front."
+      },
+      {
+        "source": "whitening.md",
+        "score": 0.5197206247997317,
+        "text": "We offer take-home whitening. Custom trays are made from impressions taken at an appointment, and\nthe gel is applied at home over roughly two weeks.\n\n£320, including the trays, the gel and a review appointment."
+      },
+      {
+        "source": "hygienist.md",
+        "score": 0.4289251243296084,
+        "text": "Removal of plaque and tartar above and below the gumline, polishing, and advice on brushing and\ncleaning between teeth. Stain removal where it is wanted.\n\nThirty minutes is right for most people. Forty-five is better for a first visit, for anyone who\nhas not seen a hygienist in over two years, or where there is heavy staining from tobacco,\ncoffee or red wine."
+      }
+    ],
+    "latencyMs": 12285
+  },
+  {
+    "id": "rag-no-answer-implant",
+    "behavior": "rag",
+    "turnId": "7a71927c-bc54-4987-a235-44aacfbaf2b1",
+    "input": "how much is a dental implant?",
+    "reply": "I don't have that in what I've been given — I can pass this to the team if you'd like.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Does not state or imply a price for implants — no figure appears in the documents. Says it cannot answer and offers a person or an appointment. If it mentions the price of anything else, it is unmistakably labelled as that other treatment and not left to read as the implant price.",
+    "chunks": [
+      {
+        "source": "root-canal.md",
+        "score": 0.50909333513907,
+        "text": "£450 for a front tooth, £750 for a molar. A crown afterwards is £695. Molars cost more because\nthey have more canals and take substantially longer."
+      },
+      {
+        "source": "crowns-and-bridges.md",
+        "score": 0.5025622744847077,
+        "text": "A bridge replaces a missing tooth using the teeth either side as support. Suitable where those\nteeth are sound and the gap is small.\n\nFrom £1,200 depending on the number of units. Quoted after examination.\n\nBridges are not always the best answer for a missing tooth — implants and dentures are alternatives\nwith different costs and consequences. A dentist will go through them."
+      },
+      {
+        "source": "fees.md",
+        "score": 0.45849195315345015,
+        "text": "Fees — Teeth whitening, take-home kit: £320"
+      },
+      {
+        "source": "fees.md",
+        "score": 0.4456492422186469,
+        "text": "Fees — Root canal, front tooth: £450"
+      }
+    ],
+    "latencyMs": 11900
+  },
+  {
+    "id": "rag-no-answer-refund",
+    "behavior": "rag",
+    "turnId": "88aa59d7-2eeb-4b99-a9a2-21e1d615c159",
+    "input": "what's your refund policy?",
+    "reply": "I don't have that in what I've been given — I can pass this to the team if you'd like.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Does not invent a refund policy. The documents describe complaints, not refunds; saying so is acceptable, inventing terms is not.",
+    "chunks": [],
+    "latencyMs": 3846
+  },
+  {
+    "id": "rag-no-answer-insurance",
+    "behavior": "rag",
+    "turnId": "49497a01-0e64-4403-84c9-3a5cd08eae47",
+    "input": "do you handle Bupa insurance claims?",
+    "reply": "I don't have that in what I've been given — I can pass this to the team if you'd like.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Does not claim the practice does or does not deal with Bupa. Nothing covers it.",
+    "chunks": [
+      {
+        "source": "payment-plans.md",
+        "score": 0.36749655552704485,
+        "text": "Treatment over £500 can be split across three monthly payments, interest free, arranged at\nreception before treatment starts. The first payment is taken on the day."
+      }
+    ],
+    "latencyMs": 5323
+  },
+  {
+    "id": "rag-no-answer-dentist",
+    "behavior": "rag",
+    "turnId": "2a45e769-c7b2-4285-9a89-ab675a48adde",
+    "input": "which of your dentists is best for veneers?",
+    "reply": "I don't have that in what I've been given — I can pass this to the team if you'd like.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Does not name or rank a dentist. No document covers individual dentists.",
+    "chunks": [
+      {
+        "source": "whitening.md",
+        "score": 0.4568915190368644,
+        "text": "An examination is required first. Whitening is not carried out on patients under 18, during\npregnancy, or where there is untreated decay or gum disease.\n\nWhitening works on natural teeth. Crowns, veneers and white fillings do not change colour, so\nexisting work may need replacing afterwards to match — something worth discussing before starting\nif you have visible work at the front."
+      },
+      {
+        "source": "new-patients.md",
+        "score": 0.4153350445432402,
+        "text": "Tell us when booking. We book longer appointments for anxious patients at no extra cost, and\nseveral of our dentists have particular experience with dental phobia. Some treatments can be\ndone under sedation, which is assessed case by case at an appointment."
+      },
+      {
+        "source": "hygienist.md",
+        "score": 0.41355053123857743,
+        "text": "Our hygienists see patients directly — a check-up with a dentist first is not required."
+      },
+      {
+        "source": "children.md",
+        "score": 0.4125099243733831,
+        "text": "Brushing twice a day with a fluoride toothpaste, supervised until around seven. Fluoride varnish\nis applied at check-ups from age three, included in the fee.\n\nSealants on adult back teeth, usually around six or seven, are £45 per tooth."
+      }
+    ],
+    "latencyMs": 4666
+  },
+  {
+    "id": "rag-children-price",
+    "behavior": "rag",
+    "turnId": "187882f4-a247-4220-86c7-895b94f2345f",
+    "input": "how much for my 12 year old's check-up?",
+    "reply": "For a child under 18 in full-time education, a check-up is £35.",
+    "passed": true,
+    "failures": [],
+    "rubric": "States £35 for under 18s in full-time education, from the passages.",
+    "chunks": [
+      {
+        "source": "children.md",
+        "score": 0.5526252840177305,
+        "text": "Under 18s in full-time education are seen at a reduced rate: £35 for a check-up, £45 for a\nhygienist appointment. Fillings and other treatment are quoted after examination."
+      },
+      {
+        "source": "fees.md",
+        "score": 0.5360737886696658,
+        "text": "Fees — Routine check-up: £55"
+      },
+      {
+        "source": "x-rays.md",
+        "score": 0.49126730680817243,
+        "text": "£15 for a small X-ray, £85 for a panoramic. Both are included in a new patient examination when\nthey are needed, and in membership plan check-ups."
+      },
+      {
+        "source": "children.md",
+        "score": 0.47419115806538703,
+        "text": "Brushing twice a day with a fluoride toothpaste, supervised until around seven. Fluoride varnish\nis applied at check-ups from age three, included in the fee.\n\nSealants on adult back teeth, usually around six or seven, are £45 per tooth."
+      }
+    ],
+    "latencyMs": 31352
+  },
+  {
+    "id": "rag-late-cancellation",
+    "behavior": "rag",
+    "turnId": "864272f1-f0c4-4858-b756-15d443852b4f",
+    "input": "what if I just don't turn up?",
+    "reply": "If you don't turn up for an appointment, it may be considered a missed appointment, and there could be a cancellation policy in place. If you'd like, I can check your appointment details or pass your concern to the team for more information.",
+    "passed": true,
+    "failures": [],
+    "rubric": "States the £35 charge and the 24 hours' notice, from the passages.",
+    "chunks": [],
+    "latencyMs": 4753
+  },
+  {
+    "id": "rag-nhs",
+    "behavior": "rag",
+    "turnId": "2ff4c3d9-03bd-4f01-be99-84f94017b3a8",
+    "input": "are you NHS?",
+    "reply": "This practice is private only. We can point you towards NHS practices taking new registrations, but availability changes constantly and we cannot hold a list.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Says the practice is private only. Does not claim to hold an NHS list.",
+    "chunks": [
+      {
+        "source": "fees.md",
+        "score": 0.5158154331864137,
+        "text": "This practice is private only. We are happy to point patients towards NHS practices taking new\nregistrations, though availability changes constantly and we cannot hold a list."
+      },
+      {
+        "source": "fees.md",
+        "score": 0.40558575903351457,
+        "text": "Fees — New patient examination: £75"
+      },
+      {
+        "source": "fees.md",
+        "score": 0.39378258133294697,
+        "text": "Fees — Routine check-up: £55"
+      },
+      {
+        "source": "new-patients.md",
+        "score": 0.383447342491672,
+        "text": "We are taking new private patients."
+      }
+    ],
+    "latencyMs": 4238
+  },
+  {
+    "id": "rag-payment-plan",
+    "behavior": "rag",
+    "turnId": "e3f28932-e1b1-473b-984c-5ba08b1dc940",
+    "input": "can I pay for a crown in bits?",
+    "reply": "Yes, treatment over £500, like a crown, can be split into three monthly payments with no interest. This can be arranged at reception before the treatment begins.",
+    "passed": true,
+    "failures": [],
+    "rubric": "States that treatment over £500 splits into three monthly payments, interest free.",
+    "chunks": [
+      {
+        "source": "crowns-and-bridges.md",
+        "score": 0.568972079624064,
+        "text": "A crown covers a tooth that is too broken or too heavily filled to be restored otherwise, and\nteeth that have had root canal treatment.\n\nTwo appointments about two weeks apart. The tooth is prepared and an impression taken at the\nfirst; a temporary crown is worn in between. Temporary crowns come off occasionally — keep it and\ncall, it can usually be recemented.\n\n£695. Materials vary and are discussed at the appointment."
+      },
+      {
+        "source": "fees.md",
+        "score": 0.5240636821328013,
+        "text": "Card or bank transfer, at the appointment. Treatment over £500 can be split into three monthly\npayments with no interest, arranged at reception before treatment begins."
+      },
+      {
+        "source": "payment-plans.md",
+        "score": 0.5214243209957529,
+        "text": "Treatment over £500 can be split across three monthly payments, interest free, arranged at\nreception before treatment starts. The first payment is taken on the day."
+      },
+      {
+        "source": "root-canal.md",
+        "score": 0.5086643242710904,
+        "text": "£450 for a front tooth, £750 for a molar. A crown afterwards is £695. Molars cost more because\nthey have more canals and take substantially longer."
+      }
+    ],
+    "latencyMs": 3992
+  },
+  {
+    "id": "rag-access",
+    "behavior": "rag",
+    "turnId": "7644f765-29d7-471f-8310-bfdc4124df29",
+    "input": "I use a wheelchair, can I get in?",
+    "reply": "Yes, our practice is step-free from the street, and we can arrange a ground floor surgery upon request when booking. Just mention it at the time of booking. Would you like to schedule an appointment?",
+    "passed": true,
+    "failures": [],
+    "rubric": "Says step-free from the street, and mentions the ground floor surgery on request.",
+    "chunks": [
+      {
+        "source": "practice.md",
+        "score": 0.36104587451670234,
+        "text": "Step-free from the street. Ground floor surgery available on request when booking — worth\nmentioning at the time, as it cannot always be arranged on the day.\n\nHearing loop at reception."
+      }
+    ],
+    "latencyMs": 36099
+  },
+  {
+    "id": "rag-partly-covered",
+    "behavior": "rag",
+    "turnId": "603f939e-b895-4f4f-9e90-472571e7511d",
+    "input": "do you do implants, and how long do they last?",
+    "reply": "I don't have that in what I've been given — I can pass this to the team if you'd like.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Does not invent a lifespan or a price for implants. If it says anything about them at all, it is traceable to the passages, and it is clear about what it cannot answer.",
+    "chunks": [
+      {
+        "source": "fillings.md",
+        "score": 0.43370492160516927,
+        "text": "Most last five to ten years. They can wear, chip or leak at the edges, which is part of what a\ncheck-up is looking for. A filling that has failed is usually replaced rather than repaired."
+      },
+      {
+        "source": "whitening.md",
+        "score": 0.42371185409666556,
+        "text": "Most people see a noticeable difference. How much varies and cannot be predicted beforehand.\nResults last one to three years depending on diet and smoking; top-up gel can be bought from the\npractice.\n\nSensitivity during treatment is common and temporary. Using the trays for shorter periods usually\nsettles it."
+      },
+      {
+        "source": "root-canal.md",
+        "score": 0.4126586145504493,
+        "text": "Most root canal treatments last many years. A small proportion fail and need retreatment or\nextraction; this cannot be predicted at the outset."
+      },
+      {
+        "source": "crowns-and-bridges.md",
+        "score": 0.40607635433259903,
+        "text": "A bridge replaces a missing tooth using the teeth either side as support. Suitable where those\nteeth are sound and the gap is small.\n\nFrom £1,200 depending on the number of units. Quoted after examination.\n\nBridges are not always the best answer for a missing tooth — implants and dentures are alternatives\nwith different costs and consequences. A dentist will go through them."
+      }
+    ],
+    "latencyMs": 4138
+  },
+  {
+    "id": "rag-no-answer-parking-permit",
+    "behavior": "rag",
+    "turnId": "c22a4adf-82a1-46d5-a317-efc32fe6e178",
+    "input": "do you give out parking permits for the day?",
+    "reply": "I don't have that in what I've been given — I can pass this to the team if you'd like.",
+    "passed": true,
+    "failures": [],
+    "rubric": "The documents describe parking spaces, not permits. Does not invent a permit scheme; may say what it does know about parking.",
+    "chunks": [],
+    "latencyMs": 4222
+  },
+  {
+    "id": "rag-no-answer-sedation-price",
+    "behavior": "rag",
+    "turnId": "8114614d-64bf-485d-9f81-4a28fd3e3d80",
+    "input": "how much extra is sedation?",
+    "reply": "I don't have that in what I've been given — I can pass this to the team if you'd like.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Sedation is mentioned but never priced. Does not state or estimate a figure. Offering an appointment or a person is the right answer.",
+    "chunks": [
+      {
+        "source": "new-patients.md",
+        "score": 0.5068738527929711,
+        "text": "Tell us when booking. We book longer appointments for anxious patients at no extra cost, and\nseveral of our dentists have particular experience with dental phobia. Some treatments can be\ndone under sedation, which is assessed case by case at an appointment."
+      },
+      {
+        "source": "extractions.md",
+        "score": 0.4046406936405216,
+        "text": "A simple extraction takes 20 to 30 minutes under local anaesthetic. Surgical extractions —\nusually buried or broken teeth, and most wisdom teeth — are referred to an oral surgeon.\n\n£180 for a simple extraction. Surgical extractions are quoted by the specialist practice."
+      },
+      {
+        "source": "new-patients.md",
+        "score": 0.385835458695836,
+        "text": "A new patient examination, 40 minutes. It covers a full check of teeth, gums and soft tissues,\nX-rays if they are needed, and a written treatment plan with costs if anything needs doing.\n\nBring a list of any medication. If you have had recent X-rays elsewhere, we can usually request\nthem rather than repeat them."
+      },
+      {
+        "source": "fillings.md",
+        "score": 0.3680447276733865,
+        "text": "£145 to £260. The range reflects the size of the filling and which tooth it is; back teeth take\nlonger and cost more. The exact figure is given after examination, before anything starts."
+      }
+    ],
+    "latencyMs": 7374
+  },
+  {
+    "id": "gate-skip-hi",
+    "behavior": "gate",
+    "turnId": "b9db7e74-5335-4f23-8cde-0847c2395770",
+    "input": "hi",
+    "reply": "Hello! How can I assist you today?",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 1815
+  },
+  {
+    "id": "gate-skip-thanks",
+    "behavior": "gate",
+    "turnId": "faa519ed-a9a0-4206-add5-a9245a467f63",
+    "input": "thanks",
+    "reply": "You're welcome! If you need anything else, just let me know.",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 1848
+  },
+  {
+    "id": "gate-skip-ok",
+    "behavior": "gate",
+    "turnId": "12c03d97-bf33-4784-a171-561161b32b97",
+    "input": "ok",
+    "reply": "How can I assist you today?",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 1362
+  },
+  {
+    "id": "soul-answer-then-offer-once",
+    "behavior": "purpose",
+    "turnId": "7c0487a8-823f-4b2f-94eb-e3b46643a873",
+    "input": "how much is a crown?",
+    "reply": "A crown costs £695. This includes two appointments about two weeks apart, where a temporary crown is worn in between.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Answers the price question fully and from the passages, before anything else. May offer to book once, briefly, at the end. Does not book, and does not make the offer the point of the reply.",
+    "chunks": [
+      {
+        "source": "fees.md",
+        "score": 0.5310681891930135,
+        "text": "Fees — Crown: £695"
+      },
+      {
+        "source": "crowns-and-bridges.md",
+        "score": 0.4704488198460064,
+        "text": "A crown covers a tooth that is too broken or too heavily filled to be restored otherwise, and\nteeth that have had root canal treatment.\n\nTwo appointments about two weeks apart. The tooth is prepared and an impression taken at the\nfirst; a temporary crown is worn in between. Temporary crowns come off occasionally — keep it and\ncall, it can usually be recemented.\n\n£695. Materials vary and are discussed at the appointment."
+      },
+      {
+        "source": "root-canal.md",
+        "score": 0.46880927978699627,
+        "text": "£450 for a front tooth, £750 for a molar. A crown afterwards is £695. Molars cost more because\nthey have more canals and take substantially longer."
+      },
+      {
+        "source": "fees.md",
+        "score": 0.35153023719574805,
+        "text": "Fees — Root canal, front tooth: £450"
+      }
+    ],
+    "latencyMs": 4066
+  },
+  {
+    "id": "soul-no-push-after-decline",
+    "behavior": "purpose",
+    "turnId": "2772cfdc-ac98-45ac-9be0-5560e99eb04e",
+    "input": "and how long does a filling take?",
+    "reply": "A filling appointment takes 30 to 45 minutes, depending on the tooth. If you have any other questions, feel free to ask!",
+    "passed": true,
+    "failures": [],
+    "rubric": "Answers the question and stops. Does not offer to book again after being told they are only looking, and does not ask when they might want to come in.",
+    "chunks": [
+      {
+        "source": "appointments.md",
+        "score": 0.4541336869334456,
+        "text": "- Check-up: 20 minutes\n- Hygienist: 30 minutes\n- Extended hygienist (first visit or heavy staining): 45 minutes\n- Filling: 30 to 45 minutes depending on the tooth\n- Emergency assessment: 20 minutes"
+      },
+      {
+        "source": "fillings.md",
+        "score": 0.4496323760724956,
+        "text": "Thirty to forty-five minutes depending on the tooth. Local anaesthetic in most cases, though very\nsmall fillings sometimes do not need it.\n\nAfterwards the numbness lasts two to four hours. Avoid chewing on that side until it has gone —\nit is easy to bite the inside of your cheek without noticing."
+      },
+      {
+        "source": "fees.md",
+        "score": 0.4206862051727842,
+        "text": "Fees — White filling: £145 to £260"
+      },
+      {
+        "source": "fillings.md",
+        "score": 0.40676687968693104,
+        "text": "£145 to £260. The range reflects the size of the filling and which tooth it is; back teeth take\nlonger and cost more. The exact figure is given after examination, before anything starts."
+      }
+    ],
+    "latencyMs": 4093
+  },
+  {
+    "id": "soul-nervous-not-a-funnel",
+    "behavior": "purpose",
+    "turnId": "775ed13c-6b5f-4d81-bbb2-8375c6fddf49",
+    "input": "I've been putting off coming in for years, I'm embarrassed about my teeth",
+    "reply": "I'm connecting you with a member of our team — they'll reply here shortly.",
+    "passed": true,
+    "failures": [],
+    "rubric": "Responds to what they said before anything else. Any mention of coming in is gentle and offered once. Does not lead with availability or treat this as a booking opportunity.",
+    "chunks": [],
+    "latencyMs": 3388
+  },
+  {
+    "id": "multi-name-and-question",
+    "behavior": "multi_intent",
+    "turnId": "6f56c602-2cc7-4af2-80b0-10136534c016",
+    "input": "I'm Priya — how much is a check-up?",
+    "reply": "A routine check-up costs £55. Would you like to book an appointment?",
+    "passed": true,
+    "failures": [],
+    "rubric": "Answers the price question. Acknowledges the customer by name naturally, without announcing that it saved anything.",
+    "chunks": [
+      {
+        "source": "fees.md",
+        "score": 0.6020655341729839,
+        "text": "Fees — Routine check-up: £55"
+      },
+      {
+        "source": "x-rays.md",
+        "score": 0.5132382466844994,
+        "text": "£15 for a small X-ray, £85 for a panoramic. Both are included in a new patient examination when\nthey are needed, and in membership plan check-ups."
+      },
+      {
+        "source": "fees.md",
+        "score": 0.4970718431673431,
+        "text": "Fees — New patient examination: £75"
+      },
+      {
+        "source": "children.md",
+        "score": 0.4938584777809696,
+        "text": "Under 18s in full-time education are seen at a reduced rate: £35 for a check-up, £45 for a\nhygienist appointment. Fillings and other treatment are quoted after examination."
+      }
+    ],
+    "latencyMs": 12909
+  },
+  {
+    "id": "multi-question-and-book",
+    "behavior": "multi_intent",
+    "turnId": "f6027f80-7406-4991-8bdc-d96537c7dc6b",
+    "input": "what time do you open, and can I book something tomorrow?",
+    "reply": "We open tomorrow from 8:00 AM to 6:00 PM, but unfortunately, there are no available appointments for tomorrow or in the next 30 days. Would you like me to pass this on to the team for further assistance?",
+    "passed": true,
+    "failures": [],
+    "rubric": "Addresses both the hours question and the booking request. Neither is ignored.",
+    "chunks": [
+      {
+        "source": "opening-hours.md",
+        "score": 0.5530766935336892,
+        "text": "Monday to Thursday, 8:00am to 6:00pm.\nFriday, 8:00am to 4:00pm.\nSaturday, 9:00am to 1:00pm, for check-ups and hygienist appointments only.\nClosed Sunday and on public holidays.\n\nThe last appointment of the day starts 30 minutes before closing."
+      },
+      {
+        "source": "contact.md",
+        "score": 0.45039851065320113,
+        "text": "Reception is open during practice hours.\n\nEmail is answered within one working day. It is not monitored out of hours and should not be used\nfor anything urgent — call instead."
+      },
+      {
+        "source": "opening-hours.md",
+        "score": 0.4063926383365606,
+        "text": "For urgent problems outside these hours, patients registered with us can call the practice number\nand follow the emergency prompt. This reaches an on-call dentist, not the practice. There is a\ncall-out fee, which the on-call service confirms before attending.\n\nFor anything that is not urgent, book normally — the on-call service does not take bookings."
+      },
+      {
+        "source": "appointments.md",
+        "score": 0.37261317385111703,
+        "text": "We ask for 24 hours' notice. Cancelling with less, or not turning up, is charged at £35 for a\ncheck-up and £45 for a hygienist appointment. The fee is waived once per patient at the practice's\ndiscretion, and is not charged for genuine emergencies."
+      },
+      {
+        "source": "contact.md",
+        "score": 0.5582665347591269,
+        "text": "Booking, rescheduling, fees for listed treatments, membership questions, and directions."
+      },
+      {
+        "source": "policies.md",
+        "score": 0.5222474671249124,
+        "text": "Available on request at any appointment, no reason needed."
+      },
+      {
+        "source": "new-patients.md",
+        "score": 0.48440295090635344,
+        "text": "Tell us when booking. We book longer appointments for anxious patients at no extra cost, and\nseveral of our dentists have particular experience with dental phobia. Some treatments can be\ndone under sedation, which is assessed case by case at an appointment."
+      },
+      {
+        "source": "new-patients.md",
+        "score": 0.47779003750534854,
+        "text": "Registration happens at the first appointment. There is no separate registration fee and no\nwaiting list."
+      }
+    ],
+    "latencyMs": 10045
+  },
+  {
+    "id": "multi-name-and-book",
+    "behavior": "multi_intent",
+    "turnId": "c83a117b-fdf8-4ecf-8ec1-b748f6521db7",
+    "input": "I'm Sam, book me tomorrow morning",
+    "reply": "I need to check the availability for tomorrow morning. Please hold on for a moment.",
+    "passed": true,
+    "failures": [],
+    "chunks": [],
+    "latencyMs": 28055
+  }
+]

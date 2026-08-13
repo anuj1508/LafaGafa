@@ -1,0 +1,17 @@
+{
+  "ranAt": "2026-08-10T20:53:13.963Z",
+  "provider": "google",
+  "model": "gemini-3.5-flash-lite",
+  "cases": 57,
+  "accuracy": 1,
+  "precision": 1,
+  "precisionFloor": 0.85,
+  "recall": 1,
+  "recallFloor": 0.95,
+  "truePositive": 30,
+  "falsePositive": 0,
+  "trueNegative": 27,
+  "falseNegative": 0,
+  "falseSkips": [],
+  "falseRetrieves": []
+}

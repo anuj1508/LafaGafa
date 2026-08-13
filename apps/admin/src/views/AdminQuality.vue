@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { AGENTS, CONFIG_CHANGES, gapsFor, npsFor, SUB_ACCOUNTS } from "../mock/tenancy";
-import { BEHAVIOUR_EVAL, GATE_EVAL, JUDGE_EVAL } from "../mock/quality";
+import { BEHAVIOUR_EVAL, GATE_EVAL, JUDGE_EVAL } from "../measured";
 import { scope } from "../scope";
 
 /**
