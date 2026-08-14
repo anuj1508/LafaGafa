@@ -1,6 +1,8 @@
+import { sql } from "drizzle-orm";
 import express, { type Express } from "express";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { asyncHandler } from "./async-handler.js";
 import type { AppContext } from "./context.js";
 import { adminRoutes } from "./routes/admin.js";
 import { chatRoutes } from "./routes/chat.js";
@@ -37,6 +39,27 @@ export function createApp(ctx: AppContext): Express {
   app.get("/health", (_req, res) => {
     res.json({ status: "ok", business: ctx.settings.businessName });
   });
+
+  /**
+   * Readiness, not liveness: `/health` answers from memory and stays green with a dead database.
+   * The query is what a monitor should watch, and what keeps a pooled connection in use.
+   */
+  app.get(
+    "/health/db",
+    asyncHandler(async (_req, res) => {
+      const startedAt = Date.now();
+      try {
+        await ctx.db.execute(sql`select 1`);
+        res.json({ status: "ok", dbMs: Date.now() - startedAt });
+      } catch (error) {
+        res.status(503).json({
+          status: "unavailable",
+          dbMs: Date.now() - startedAt,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }),
+  );
 
   app.use(adminRoutes(ctx));
   app.use(webhookRoutes(ctx));

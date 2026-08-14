@@ -11,7 +11,7 @@ export type Database = NodePgDatabase<typeof schema>;
  */
 export function createDatabase(
   connectionString: string,
-  options: { ca?: string } = {},
+  options: { ca?: string; onIdleError?: (error: Error) => void } = {},
 ): { db: Database; pool: pg.Pool } {
   const pool = new pg.Pool({
     connectionString,
@@ -22,6 +22,11 @@ export function createDatabase(
     keepAlive: true,
     ssl: sslFor(connectionString, options.ca),
   });
+
+  // Attached unconditionally: without a listener, an idle connection dying is an unhandled 'error'
+  // event, which takes the whole process down. See #connection-pool.
+  pool.on("error", (error) => options.onIdleError?.(error));
+
   return { db: drizzle(pool, { schema }), pool };
 }
 

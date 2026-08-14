@@ -63,7 +63,11 @@ export async function createAppContext(): Promise<AppContext> {
     settings.model.chain = [chosen, ...settings.model.chain.filter((entry) => entry !== chosen)];
   };
   const logger = createLogger(env.LOG_LEVEL);
-  const { db, pool } = createDatabase(env.DATABASE_URL);
+  const { db, pool } = createDatabase(env.DATABASE_URL, {
+    onIdleError: (error) => {
+      logger.warn("idle database connection dropped", { error: error.message });
+    },
+  });
   // Retrieval issues one query per question, so the second one would otherwise open a connection
   // mid-turn and put the handshake on the customer's latency.
   await warmPool(pool);

@@ -418,6 +418,11 @@ over an HNSW index. The database was never the cost.
 Measured, same two-query shape: 6163ms before, 2351ms after. Warm, two parallel vector queries cost
 ~900ms and four cost ~629ms.
 
+Holding them open makes an idle-connection `error` event certain, and unhandled that is fatal: two
+deploys exited 1 during idleness, losing every webhook for the ~45s restart. `createDatabase`
+therefore attaches the listener itself, reporting through a callback because `db` may not import the
+edge. `pg` discards the broken client regardless; the handler only decides whether the process lives.
+
 The wrong answers this ruled out, both plausible and both measurable: the pgvector search being
 slow, and the 29.5KB embedding literal saturating the uplink. Shipping two of those payloads in
 parallel costs 335ms.
